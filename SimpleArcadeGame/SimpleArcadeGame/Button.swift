@@ -11,7 +11,7 @@ import SpriteKit
 class Button:SKSpriteNode {
     
     init(name: String, image:SKTexture) {
-        super.init(texture: image, color: SKColor.clear, size: CGSize(width: 180, height: 180))
+        super.init(texture: image, color: SKColor.clear, size: CGSize(width: 175, height: 175))
         self.name = name
     }
     
