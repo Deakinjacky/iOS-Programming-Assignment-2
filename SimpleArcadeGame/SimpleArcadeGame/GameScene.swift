@@ -52,6 +52,11 @@ class GameScene: SKScene {
     var shopBuyButton1:SKSpriteNode!
     var shopBuyButton2:SKSpriteNode!
     var crossButton:SKSpriteNode!
+    //Items
+    var item1:SKSpriteNode!
+    var item1Number:SKLabelNode!
+    var item2:SKSpriteNode!
+    var item2Number:SKLabelNode!
     //Leaderboard
     var leaderboardButton:SKSpriteNode!
     
@@ -86,6 +91,35 @@ class GameScene: SKScene {
     //Settings
     var soundButton:SKSpriteNode!
     var musicButton:SKSpriteNode!
+    
+    //Hearts
+    var health1: SKSpriteNode!
+    var health2: SKSpriteNode!
+    var health3: SKSpriteNode!
+    var healthPoints:Int = 3 {
+        didSet {
+            if healthPoints == 3 {
+                health1?.alpha = 1.0
+                health2?.alpha = 1.0
+                health3?.alpha = 1.0
+            }
+            else if healthPoints == 2 {
+                health1?.alpha = 1.0
+                health2?.alpha = 1.0
+                health3?.alpha = 0.0
+            }
+            else if healthPoints == 1 {
+                health1?.alpha = 1.0
+                health2?.alpha = 0.0
+                health3?.alpha = 0.0
+            }
+            else {
+                health1?.alpha = 0.0
+                health2?.alpha = 0.0
+                health3?.alpha = 0.0
+            }
+        }
+    }
     
     // Provides a way to position elements relative to screen size. Taken from:
     // https:github.com/jozemite/Spritekit-Universal-Game
@@ -148,6 +182,16 @@ class GameScene: SKScene {
                 shopBuyButton2.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
                 buyItem(cost: 50, itemNumber: 2)
             }
+            //Items - TODO:
+            if item1.contains(touchPosition) {
+                item1.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
+                useItem1()
+            }
+            else if item2.contains(touchPosition) {
+                item2.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
+                useItem2()
+            }
+            
             if leaderboardButton.contains(touchPosition) {
                 leaderboardButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
             }
@@ -175,6 +219,7 @@ class GameScene: SKScene {
         
         createButtons()
         createShop()
+        createItems()
     }
     
     func createButtons() {
@@ -260,6 +305,7 @@ class GameScene: SKScene {
         scoreLabel.fontSize = 85
         scoreLabel.verticalAlignmentMode = .center
         scoreLabel.horizontalAlignmentMode = .center
+        scoreLabel.alpha = 0.0
         uiNode.addChild(scoreLabel)
         
         //Coins
@@ -273,7 +319,7 @@ class GameScene: SKScene {
         coinsLabel.zPosition = 4
         coinsLabel.text = String("\(coins)")
         coinsLabel.fontName = "Palatino-Bold"
-        coinsLabel.fontColor = SKColor.yellow
+        coinsLabel.fontColor = SKColor.black
         coinsLabel.fontSize = 80
         coinsLabel.verticalAlignmentMode = .center
         coinsLabel.horizontalAlignmentMode = .left
@@ -290,6 +336,41 @@ class GameScene: SKScene {
         coinsIcon.size = CGSize(width: 60, height: 100)
         coinsIcon.name = "CoinsIcon"
         uiNode.addChild(coinsIcon)
+        
+        //Hearts
+        health1 = SKSpriteNode(texture: SKTexture(imageNamed: "health"))
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            health1.position = CGPoint(x: size.width*0.04, y: size.height*0.93)
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            health1.position = CGPoint(x: size.width*0.04, y: playableRect.maxY*0.93)
+        }
+        health1.zPosition = 4
+        health1.size = CGSize(width: 130, height: 110)
+        uiNode.addChild(health1)
+        
+        health2 = SKSpriteNode(texture: SKTexture(imageNamed: "health"))
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            health2.position = CGPoint(x: size.width*0.112, y: size.height*0.93)
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            health2.position = CGPoint(x: size.width*0.112, y: playableRect.maxY*0.93)
+        }
+        
+        health2.zPosition = 4
+        health2.size = CGSize(width: 130, height: 110)
+        uiNode.addChild(health2)
+        
+        health3 = SKSpriteNode(texture: SKTexture(imageNamed: "health"))
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            health3.position = CGPoint(x: size.width*0.183, y: size.height*0.93)
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            health3.position = CGPoint(x: size.width*0.183, y: playableRect.maxY*0.93)
+        }
+        health3.zPosition = 4
+        health3.size = CGSize(width: 130, height: 110)
+        uiNode.addChild(health3)
         
         //Element Postions
         element1Position = CGPoint(x: size.width*0.4, y: playableRect.maxY*0.505)
@@ -705,6 +786,7 @@ class GameScene: SKScene {
                     //beginGame()
                     //uiNode.run(redExplode1Fx)
                     child.removeFromParent()
+                    startGame()
                     break;
                 }
             }
@@ -800,12 +882,9 @@ class GameScene: SKScene {
         else {/*TODO: ERROR Sound*/}
     }
     
-    //TODO: Hide everything (Shop/Leader button tapped OR Starting game) //TODO: CAll in Start game with exclude = true
+    //TODO: Hide everything (Shop/Leader button tapped OR Starting game)
     func hideEverything(excludeButtons: Bool) {
         //Top Elements
-        scoreLabel.alpha = 1.0
-        scoreLabel.removeAllActions()
-        scoreLabel.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
         highScoreLabel.alpha = 1.0
         highScoreLabel.removeAllActions()
         highScoreLabel.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
@@ -815,6 +894,7 @@ class GameScene: SKScene {
         
         //Buttons
         invokeRemoveAll()
+        //Check to see if game is starting
         if !excludeButtons {
             button1.removeAllActions()
             button1.alpha = 1.0
@@ -828,6 +908,10 @@ class GameScene: SKScene {
             invokeButton.removeAllActions()
             invokeButton.alpha = 1.0
             invokeButton.run(SKAction.moveTo(y: -size.height*0.53, duration: 0.5))
+            //Hearts
+            health1.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
+            health2.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
+            health3.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
         }
         //Left elements
         coinsLabel.alpha = 1.0
@@ -850,14 +934,6 @@ class GameScene: SKScene {
     }
     func showEverything() {
         //Top Elements
-        scoreLabel.alpha = 1.0
-        scoreLabel.removeAllActions()
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            scoreLabel.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
-        }
-        else if UIDevice.current.userInterfaceIdiom == .phone {
-            scoreLabel.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
-        }
         highScoreLabel.alpha = 1.0
         highScoreLabel.removeAllActions()
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -885,6 +961,17 @@ class GameScene: SKScene {
         invokeButton.removeAllActions()
         invokeButton.alpha = 1.0
         invokeButton.run(SKAction.moveTo(y: playableRect.maxY*0.22, duration: 0.5))
+        //Hearts
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            health1.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
+            health2.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
+            health3.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            health1.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
+            health2.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
+            health3.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
+        }
         
         //Left elements
         coinsLabel.alpha = 1.0
@@ -943,6 +1030,159 @@ class GameScene: SKScene {
         //Save to settings
         if let controller = self.view?.window?.rootViewController as? GameViewController {
             controller.saveSettings()
+        }
+    }
+    
+    //TODO:
+    func startGame() {
+        hideEverything(excludeButtons: true)
+        scoreLabel.run(SKAction.fadeIn(withDuration: 0.5))
+        showItems()
+    }
+    
+    //ITEMS
+    func createItems() {
+        //Items
+        item1 = SKSpriteNode(texture: SKTexture(imageNamed: "health_potion"))
+        item1.zPosition = 3
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            item1.position = CGPoint(x: size.width*0.80, y: size.height*0.23)
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            item1.position = CGPoint(x: size.width*0.80, y: playableRect.maxY*0.23)
+        }
+        item1.position.y = CGFloat(-size.height*0.37)
+        item1.size = CGSize(width: 160, height: 172)
+        worldNode.addChild(item1)
+        
+        item1Number = SKLabelNode()
+        item1Number.zPosition = 4
+        item1Number.text = "\(GameViewController.amountOfItem1)"
+        item1Number.fontName = "AmericanTypewriter-Bold"
+        item1Number.fontColor = SKColor.black
+        item1Number.fontSize = 95
+        item1Number.verticalAlignmentMode = .center
+        item1Number.horizontalAlignmentMode = .center
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            item1Number.position = CGPoint(x: size.width*0.77, y: size.height*0.20)
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            item1Number.position = CGPoint(x: size.width*0.77, y: playableRect.maxY*0.20)
+        }
+        item1Number.position.y = CGFloat(-size.height*0.37)
+        worldNode.addChild(item1Number)
+        
+        item2 = SKSpriteNode(texture: SKTexture(imageNamed: "mana_potion"))
+        item2.zPosition = 3
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            item2.position = CGPoint(x: size.width*0.93, y: size.height*0.23)
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            item2.position = CGPoint(x: size.width*0.93, y: playableRect.maxY*0.23)
+        }
+        item2.size = CGSize(width: 160, height: 172)
+        item2.position.y = CGFloat(-size.height*0.37)
+        worldNode.addChild(item2)
+        
+        item2Number = SKLabelNode()
+        item2Number.zPosition = 4
+        item2Number.text = "\(GameViewController.amountOfItem2)"
+        item2Number.fontName = "AmericanTypewriter-Bold"
+        item2Number.fontColor = SKColor.black
+        item2Number.fontSize = 95
+        item2Number.verticalAlignmentMode = .center
+        item2Number.horizontalAlignmentMode = .center
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            item2Number.position = CGPoint(x: size.width*0.905, y: size.height*0.20)
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            item2Number.position = CGPoint(x: size.width*0.905, y: playableRect.maxY*0.20)
+        }
+        item2Number.position.y = CGFloat(-size.height*0.37)
+        worldNode.addChild(item2Number)
+    }
+    func showItems() {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            item1.run(SKAction.moveTo(y: size.height*0.23, duration: 0.5))
+            item1Number.run(SKAction.moveTo(y: size.height*0.20, duration: 0.5))
+            item2.run(SKAction.moveTo(y: size.height*0.23, duration: 0.5))
+            item2Number.run(SKAction.moveTo(y: size.height*0.20, duration: 0.5))
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            item1.run(SKAction.moveTo(y: playableRect.maxY*0.23, duration: 0.5))
+            item1Number.run(SKAction.moveTo(y: playableRect.maxY*0.20, duration: 0.5))
+            item2.run(SKAction.moveTo(y: playableRect.maxY*0.23, duration: 0.5))
+            item2Number.run(SKAction.moveTo(y: playableRect.maxY*0.20, duration: 0.5))
+        }
+    }
+    func useItem1() {
+        guard GameViewController.amountOfItem1 >= 1 else {return}
+        
+        //Stop player from wasting item (Health points can't go over 3)
+        if healthPoints < 3 {
+            GameViewController.amountOfItem1 -= 1
+            item1Number.text = "\(GameViewController.amountOfItem1)"
+            healthPoints += 1
+            
+            if healthPoints == 3 {
+                health1?.alpha = 1.0
+                health2?.alpha = 1.0
+                health3?.alpha = 1.0
+            }
+            else if healthPoints == 2 {
+                health1?.alpha = 1.0
+                health2?.alpha = 1.0
+                health3?.alpha = 0.0
+            }
+            else if healthPoints == 1 {
+                health1?.alpha = 1.0
+                health2?.alpha = 0.0
+                health3?.alpha = 0.0
+            }
+            else {
+                health1?.alpha = 0.0
+                health2?.alpha = 0.0
+                health3?.alpha = 0.0
+            }
+        }
+    }
+    func useItem2() {
+        guard GameViewController.amountOfItem2 >= 1 else {return}
+        
+        GameViewController.amountOfItem2 -= 1
+        item2Number.text = "\(GameViewController.amountOfItem2)"
+        //Explode all enemies
+        for child in worldNode.children {
+            if let node = child as? Enemy {
+                if node.name!.contains("RedEnemy") {
+                    //explodeRedEnemy()
+                }
+                //TODO:
+                /*if node.name!.contains("GreenEnemy") {
+                    explodeGreenEnemy()
+                }
+                if node.name!.contains("BlueEnemy") {
+                    explodeBlueEnemy()
+                }
+                if node.name!.contains("YellowEnemy") {
+                    explodeYellowEnemy()
+                }
+                if node.name!.contains("PinkEnemy") {
+                    explodePinkEnemy()
+                }
+                if node.name!.contains("FastBlueEnemy") {
+                    explodeFastBlueEnemy()
+                }
+                if node.name!.contains("BrownEnemy") {
+                    explodeBrownEnemy()
+                }
+                if node.name!.contains("PurpleEnemy") {
+                    explodePurpleEnemy()
+                }
+                if node.name!.contains("BlackEnemy") {
+                    explodeBlackEnemy()
+                }*/
+            }
         }
     }
     

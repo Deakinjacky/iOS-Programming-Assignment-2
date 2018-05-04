@@ -17,8 +17,8 @@ class GameViewController: UIViewController {
     static var musicEnabled:Bool = true
     
     //Items
-    static var amountOfItem1:Int = 0
-    static var amountOfItem2:Int = 0
+    static var amountOfItem1:Int = 60
+    static var amountOfItem2:Int = 60
 
     override func viewDidLoad() {
         super.viewDidLoad()
