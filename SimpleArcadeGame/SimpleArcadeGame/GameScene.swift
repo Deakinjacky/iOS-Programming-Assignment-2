@@ -9,7 +9,15 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+struct PhysicsCategory {
+    static let none: UInt32 = 0
+    static let invulnerable: UInt32 = 0b1
+    static let boundary: UInt32 = 0b10
+    static let goal: UInt32 = 0b100
+    static let enemy: UInt32 = 0b1000
+}
+
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // Rectangle to ensure everything is visible for all devices (iPads & iPhones)
     let playableRect: CGRect!
@@ -20,6 +28,7 @@ class GameScene: SKScene {
     
     var background:SKSpriteNode!
     var initialEnemy:SKSpriteNode!
+    var goal:SKSpriteNode!
     
     var highScoreLabel: SKLabelNode!
     var highScore:Int = 0 {
@@ -121,6 +130,9 @@ class GameScene: SKScene {
         }
     }
     
+    var gameWaitTime:Int = 4
+    var redEnemyAnimation:[SKTexture]!
+    
     // Provides a way to position elements relative to screen size. Taken from:
     // https:github.com/jozemite/Spritekit-Universal-Game
     override init(size: CGSize) {
@@ -141,10 +153,19 @@ class GameScene: SKScene {
         addChild(worldNode)
         addChild(uiNode)
         
+        //Physics World - Set up a physics body around the screen
+        physicsWorld.contactDelegate = self
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+        self.physicsBody?.friction = 0
+        physicsBody!.categoryBitMask = PhysicsCategory.boundary
+        physicsBody!.collisionBitMask = PhysicsCategory.boundary
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
+        
         initialiseLevel()
         initialiseUi()
         //Destroy this bird to start game
         spawnInitialRedEnemy()
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -206,8 +227,31 @@ class GameScene: SKScene {
         }
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+    //Physics Contact
+    func didBegin(_ contact: SKPhysicsContact) {
+        guard contact.bodyA.node != nil && contact.bodyB.node != nil else {return}
+        if contact.bodyA.node?.name == "goal" || (contact.bodyB.node?.name?.contains("Enemy"))! {
+            if let child = contact.bodyA.node as? Enemy {
+                //TODO: Shake screen
+                child.removeFromParent()
+            }
+            else if let child = contact.bodyB.node as? Enemy {
+                child.removeFromParent()
+            }
+            
+            //Ensure that the enemy won't make contact multiple times
+            guard goal.physicsBody?.categoryBitMask == PhysicsCategory.goal else {return}
+            
+            goal.physicsBody?.categoryBitMask = PhysicsCategory.invulnerable
+            goal.run(SKAction.wait(forDuration: 0.1), completion: {[unowned self] in
+                self.goal.physicsBody?.categoryBitMask = PhysicsCategory.goal})
+            
+            healthPoints -= 1
+            if healthPoints <= 0 {
+                //Show Lose Screen
+                //showDefeatScreen()
+            }
+        }
     }
     
     func initialiseLevel() {
@@ -220,6 +264,19 @@ class GameScene: SKScene {
         createButtons()
         createShop()
         createItems()
+        createEnemyAnimations()
+        
+        //Invisible bar placed at the left side of the screen - When enemy reaches the bar, players loses 1 health
+        goal = SKSpriteNode(texture: nil, color: SKColor.green, size: CGSize(width: 10, height: playableRect.maxY))
+        goal.position = CGPoint(x: -(size.width*0.1), y: playableRect.maxY*0.5)
+        goal.zPosition = 0
+        goal.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: size.width*0.005, height: playableRect.maxY))
+        goal.physicsBody?.categoryBitMask = PhysicsCategory.goal
+        goal.physicsBody?.collisionBitMask = PhysicsCategory.none
+        goal.physicsBody?.contactTestBitMask = PhysicsCategory.enemy
+        goal.physicsBody?.usesPreciseCollisionDetection = true
+        goal.name = "Goal"
+        worldNode.addChild(goal)
     }
     
     func createButtons() {
@@ -744,7 +801,6 @@ class GameScene: SKScene {
     func spawnInitialRedEnemy() {
         let monster = RedEnemy()
         initialEnemy = monster
-        //TODO: Physics Body to damage player
         
         //Spell Combination - Destroy enemy by tapping on buttons in this combination
         let spellCombo = SKSpriteNode(texture: SKTexture(imageNamed:"1"), color: SKColor.red, size: CGSize(width: 220, height: 47))
@@ -759,8 +815,8 @@ class GameScene: SKScene {
         
         //Move enemy to top right of screen so player can see it
         monster.run(SKAction.move(to: CGPoint(x: size.width*0.9, y: monster.position.y), duration: 3))
-        
-        //TODO: ANIMATION
+        //ANIMATION
+        monster.run(SKAction.repeatForever(SKAction.animate(with: redEnemyAnimation, timePerFrame: 0.2)))
         
         //TODO: Recover back to normal amount of HP
         //startingHealthPoint = healthPoints
@@ -771,6 +827,34 @@ class GameScene: SKScene {
         tutorialPage.alpha = 1.0
         tutorialPage.run(SKAction.moveTo(y: playableRect.maxY*0.75, duration: 0.5))
         showTutorial()
+    }
+    func spawnRedEnemy() {
+        let monster = RedEnemy()
+        
+        //Random Y Position Number
+        let randomNumber = GKRandomDistribution(lowestValue: Int(playableRect.maxY*0.45), highestValue: Int(playableRect.maxY*0.85))
+        let randomYPosition = CGFloat(randomNumber.nextInt())
+        
+        //Spell Combination
+        let spellCombo = SKSpriteNode(texture: SKTexture(imageNamed:"1"), color: SKColor.red, size: CGSize(width: 225, height: 50))
+        spellCombo.zPosition = 0
+        spellCombo.position = CGPoint(x: 0, y: size.height*0.07)
+        monster.addChild(spellCombo)
+        
+        //TODO: Physics Body to damage player
+        monster.physicsBody = SKPhysicsBody(texture: monster.texture!, size: (monster.size))
+        monster.physicsBody?.categoryBitMask = PhysicsCategory.enemy
+        monster.physicsBody?.collisionBitMask = PhysicsCategory.none
+        monster.physicsBody?.contactTestBitMask = PhysicsCategory.goal
+        monster.zPosition = 0
+        monster.position = CGPoint(x: size.width, y: randomYPosition)
+        
+        monster.name = ("RedEnemy")
+        worldNode.addChild(monster)
+        
+        monster.run(SKAction.move(to: CGPoint(x: -(size.width*0.05), y: monster.position.y), duration: monster.speedOfMonster))
+        //ANIMATION
+        monster.run(SKAction.repeatForever(SKAction.animate(with: redEnemyAnimation, timePerFrame: 0.1)))
     }
     
     //DESTROY
@@ -783,13 +867,52 @@ class GameScene: SKScene {
                     //child.run(SKAction.animate(with: redEnemyExplosionFrames, timePerFrame: 0.09), completion: {
                         //child.removeFromParent()})
                     //TODO:
-                    //beginGame()
                     //uiNode.run(redExplode1Fx)
                     child.removeFromParent()
                     startGame()
                     break;
                 }
+                else if child.name == "RedEnemy" {
+                    score += 1
+                    //TODO: Coin
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
             }
+        }
+    }
+    
+    func spawnEnemy(randomNumber:Int) {
+        guard healthPoints > 0 else {return}
+        let random = GKRandomDistribution(lowestValue: 1, highestValue: 6)
+        let randomNextNumber = random.nextInt()
+        
+        //Initial gameWaitTime = 4
+        self.run(SKAction.wait(forDuration: TimeInterval(self.gameWaitTime)),completion: {[unowned self] in
+            guard self.healthPoints > 0 else {return}
+            
+            //TODO:Change
+            if self.score >= 0 {
+                if randomNumber > 0 {
+                    self.spawnRedEnemy()
+                }
+                else if randomNumber <= 4 {
+                    //self.spawnGreenBird()
+                }
+                else if randomNumber >= 5 {
+                    //self.spawnBlueBird()
+                }
+            }
+            
+            self.spawnEnemy(randomNumber: randomNextNumber)
+        })
+    }
+    
+    func createEnemyAnimations() {
+        redEnemyAnimation = [SKTexture]()
+        for i in 1...2 {
+            redEnemyAnimation.append(SKTexture(imageNamed:"Red"+String(i)))
         }
     }
     
@@ -1002,6 +1125,8 @@ class GameScene: SKScene {
             leaderboardButton.run(SKAction.moveTo(y: playableRect.maxY*0.36, duration: 0.5))
         }
         
+        self.goal.physicsBody?.categoryBitMask = PhysicsCategory.goal
+        
     }
     
     //SOUND FX + MUSIC TOGGLE
@@ -1038,6 +1163,8 @@ class GameScene: SKScene {
         hideEverything(excludeButtons: true)
         scoreLabel.run(SKAction.fadeIn(withDuration: 0.5))
         showItems()
+        
+        spawnEnemy(randomNumber: 1)
     }
     
     //ITEMS
