@@ -11,11 +11,18 @@ import SpriteKit
 import GameplayKit
 
 class GameViewController: UIViewController {
+    
+    //Settings
+    static var soundEnabled:Bool = true
+    static var musicEnabled:Bool = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         super.viewDidLoad()
+        
+        loadSettings()
+        
         //Make it 1 screen size
         let scene = GameScene(size: CGSize(width: 2048, height: 1536))
         let skView = self.view as! SKView
@@ -26,6 +33,58 @@ class GameViewController: UIViewController {
         skView.showsPhysics = true
         scene.scaleMode = .aspectFill
         skView.presentScene(scene)
+    }
+    
+    static func playSound(fx:String) {
+        guard GameViewController.soundEnabled == true else {return}
+        if fx == "GameplayButton" {}
+    }
+    static func prepareMusic() {
+        guard GameViewController.musicEnabled == true else {return}
+    }
+    
+    //SAVE + LOAD
+    func documentsDirectory() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        return paths[0]
+    }
+    
+    func dataFilePath() -> String {
+        return (documentsDirectory() as NSString).appendingPathComponent("Settings.plist")
+    }
+    
+    func saveSettings() {
+        let data = NSMutableData()
+        let archiver = NSKeyedArchiver(forWritingWith: data)
+        
+        archiver.encode(GameViewController.musicEnabled, forKey: "MusicEnabled")
+        archiver.encode(GameViewController.soundEnabled, forKey: "SoundEnabled")
+        
+        archiver.finishEncoding()
+        data.write(toFile: dataFilePath(), atomically: true)
+    }
+    
+    func loadSettings() {
+        if FileManager.default.fileExists(atPath: dataFilePath()) {
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: dataFilePath())) {
+                let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
+                
+                //Music
+                if (unarchiver.decodeObject(forKey: "MusicEnabled") as? Bool) == nil {
+                    GameViewController.musicEnabled = unarchiver.decodeBool(forKey: "MusicEnabled")
+                }
+                else {
+                    GameViewController.musicEnabled = (unarchiver.decodeObject(forKey: "MusicEnabled") as! Bool)
+                }
+                //Sound
+                if (unarchiver.decodeObject(forKey: "SoundEnabled") as? Bool) == nil {
+                    GameViewController.soundEnabled = unarchiver.decodeBool(forKey: "SoundEnabled")
+                }
+                else {
+                    GameViewController.soundEnabled = (unarchiver.decodeObject(forKey: "SoundEnabled") as! Bool)
+                }
+            }
+        }
     }
 
     override var shouldAutorotate: Bool {

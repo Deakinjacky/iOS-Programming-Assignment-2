@@ -19,6 +19,7 @@ class GameScene: SKScene {
     let uiNode = SKNode()
     
     var background:SKSpriteNode!
+    var initialEnemy:SKSpriteNode!
     
     var highScoreLabel: SKLabelNode!
     var highScore:Int = 0 {
@@ -43,6 +44,7 @@ class GameScene: SKScene {
     
     //Shop
     var shopButton: SKSpriteNode!
+    var shopBackground:SKSpriteNode!
     //Leaderboard
     var leaderboardButton:SKSpriteNode!
     
@@ -71,6 +73,13 @@ class GameScene: SKScene {
     var greenElement2Icon:SKSpriteNode!
     var greenElement3Icon:SKSpriteNode!
     
+    var tutorialPage:SKSpriteNode!
+    var tutorialAnim:[SKTexture]!
+    
+    //Settings
+    var soundButton:SKSpriteNode!
+    var musicButton:SKSpriteNode!
+    
     // Provides a way to position elements relative to screen size. Taken from:
     // https:github.com/jozemite/Spritekit-Universal-Game
     override init(size: CGSize) {
@@ -93,23 +102,45 @@ class GameScene: SKScene {
         
         initialiseLevel()
         initialiseUi()
+        //Destroy this bird to start game
+        spawnInitialRedEnemy()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
             let touchPosition = touch.location(in: self)
-            
+          
             if button1.contains(touchPosition) {
+                //Make button 'bounce' - More satisfying for users
+                button1.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 createElement(name: button1.name!)
             }
             else if button2.contains(touchPosition) {
+                button2.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 createElement(name: button2.name!)
             }
             else if button3.contains(touchPosition) {
+                button3.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 createElement(name: button3.name!)
             }
             if invokeButton.contains(touchPosition) {
+                invokeButton.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 invoke()
+            }
+            //TODO:
+            if shopButton.contains(touchPosition) {
+                shopButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]),completion:{[unowned self] in self.showShop()})
+            }
+            else if leaderboardButton.contains(touchPosition) {
+                leaderboardButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
+            }
+            if soundButton.contains(touchPosition) {
+                soundButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
+                toggleSoundFx()
+            }
+            else if musicButton.contains(touchPosition) {
+                musicButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
+                toggleMusic()
             }
         }
     }
@@ -125,10 +156,8 @@ class GameScene: SKScene {
         background.zPosition = -10
         addChild(background)
         
-        //Destroy this bird to start game
-        spawnInitialRedEnemy()
-        
         createButtons()
+        createShop()
     }
     
     func createButtons() {
@@ -155,28 +184,28 @@ class GameScene: SKScene {
         worldNode.addChild(invokeButton)
         
         //Shop
-        shopButton = SKSpriteNode(texture: SKTexture(imageNamed: "sd"))
+        shopButton = SKSpriteNode(texture: SKTexture(imageNamed: "ShopButton"))
         shopButton.zPosition = 3
         if UIDevice.current.userInterfaceIdiom == .pad {
-            shopButton.position = CGPoint(x: size.width*0.89, y: size.height*0.22)
+            shopButton.position = CGPoint(x: size.width*0.936, y: size.height*0.22)
         }
         else if UIDevice.current.userInterfaceIdiom == .phone {
-            shopButton.position = CGPoint(x: size.width*0.89, y: playableRect.maxY*0.22)
+            shopButton.position = CGPoint(x: size.width*0.936, y: playableRect.maxY*0.22)
         }
         shopButton.name = "ShopButton"
-        shopButton.size = CGSize(width: 200, height: 100)
+        shopButton.size = CGSize(width: 150, height: 150)
         uiNode.addChild(shopButton)
         
         //Leaderboard
-        leaderboardButton = SKSpriteNode(texture: SKTexture(imageNamed: "sd"))
+        leaderboardButton = SKSpriteNode(texture: SKTexture(imageNamed: "LeaderboardButton"))
         leaderboardButton.zPosition = 3
         if UIDevice.current.userInterfaceIdiom == .pad {
-            leaderboardButton.position = CGPoint(x: size.width*0.89, y: size.height*0.33)
+            leaderboardButton.position = CGPoint(x: size.width*0.936, y: size.height*0.36)
         }
         else if UIDevice.current.userInterfaceIdiom == .phone {
-            leaderboardButton.position = CGPoint(x: size.width*0.89, y: playableRect.maxY*0.33)
+            leaderboardButton.position = CGPoint(x: size.width*0.936, y: playableRect.maxY*0.36)
         }
-        leaderboardButton.name = "AchievementButton"
+        leaderboardButton.name = "LeaderboardButton"
         leaderboardButton.size = CGSize(width: 150, height: 150)
         uiNode.addChild(leaderboardButton)
     }
@@ -246,9 +275,9 @@ class GameScene: SKScene {
         uiNode.addChild(coinsIcon)
         
         //Element Postions
-        element1Position = CGPoint(x: size.width*0.4, y: playableRect.maxY*0.509)
-        element2Position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.509)
-        element3Position = CGPoint(x: size.width*0.6, y: playableRect.maxY*0.509)
+        element1Position = CGPoint(x: size.width*0.4, y: playableRect.maxY*0.505)
+        element2Position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.505)
+        element3Position = CGPoint(x: size.width*0.6, y: playableRect.maxY*0.505)
         //Element Icons - Indicator for player
         redElementIcon = ElementIcon(image: SKTexture(imageNamed:"redElement"))
         redElementIcon.position = element1Position
@@ -288,6 +317,48 @@ class GameScene: SKScene {
         greenElement3Icon.position = element3Position
         greenElement3Icon.zPosition = 2
         worldNode.addChild(greenElement3Icon)
+        
+        //Tutorial
+        tutorialPage = SKSpriteNode(texture: SKTexture(imageNamed:"tut1"), color: SKColor.clear, size: CGSize(width: 800, height: 590))
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            tutorialPage.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.75)
+        }
+        tutorialPage.zPosition = 5
+        tutorialPage.alpha = 0.0
+        uiNode.addChild(tutorialPage)
+        
+        tutorialAnim = [SKTexture]()
+        for i in 2...21 {
+            tutorialAnim.append(SKTexture(imageNamed:"tut"+String(i)))
+        }
+        
+        //Settings TODO: POsitions
+        soundButton = SKSpriteNode(texture: SKTexture(imageNamed: "SoundOn"), color: SKColor.clear, size: CGSize(width: 150, height: 150))
+        soundButton.zPosition = 2
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            soundButton.position = CGPoint(x: size.width*0.05, y: playableRect.maxY*0.22)
+        }
+        
+        musicButton = SKSpriteNode(texture: SKTexture(imageNamed:"MusicOn"), color: SKColor.clear, size: CGSize(width: 150, height: 150))
+        musicButton.zPosition = 2
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            musicButton.position = CGPoint(x: size.width*0.05, y: playableRect.maxY*0.36)
+        }
+        
+        if !GameViewController.soundEnabled {soundButton.texture = SKTexture(imageNamed:"SoundOff")}
+        if !GameViewController.musicEnabled {musicButton.texture = SKTexture(imageNamed:"MusicOff")}
+        uiNode.addChild(soundButton)
+        uiNode.addChild(musicButton)
+        
     }
     
     //Button effects
@@ -579,6 +650,7 @@ class GameScene: SKScene {
     //First Enemy - Starts the game when enemy is destroyed
     func spawnInitialRedEnemy() {
         let monster = RedEnemy()
+        initialEnemy = monster
         //TODO: Physics Body to damage player
         
         //Spell Combination - Destroy enemy by tapping on buttons in this combination
@@ -599,6 +671,9 @@ class GameScene: SKScene {
         
         //TODO: Recover back to normal amount of HP
         //startingHealthPoint = healthPoints
+        
+        //Show Tutorial
+        showTutorial()
     }
     
     //DESTROY
@@ -617,6 +692,75 @@ class GameScene: SKScene {
                     break;
                 }
             }
+        }
+    }
+    
+    //Tutorial
+    func showTutorial() {
+        tutorialPage.alpha = 0.0
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            tutorialPage.position.y = playableRect.maxY*0.75
+        }
+        
+        tutorialPage.run(SKAction.fadeAlpha(to: 1.0, duration: 2.0),completion:{[unowned self] in
+            self.tutorialPage.run(SKAction.repeatForever(SKAction.animate(with: self.tutorialAnim, timePerFrame: 0.20)),withKey:"TutorialAnim")
+        })
+    }
+    
+    //TODO: Shop
+    func createShop() {
+        
+    }
+    func showShop() {
+        hideEverything()
+        worldNode.run(SKAction.wait(forDuration: 0.5),completion:{[unowned self] in
+            
+        })
+    }
+    
+    //TODO: Hide everything (Shop/Leader button tapped OR Starting game)
+    func hideEverything() {
+        //Tutorial
+        tutorialPage.removeAllActions()
+        tutorialPage.alpha = 1.0
+        tutorialPage.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
+        
+        initialEnemy.run(SKAction.fadeOut(withDuration: 0.5))
+    }
+    func showEverything() {
+        
+    }
+    
+    //SOUND FX + MUSIC TOGGLE
+    func toggleSoundFx() {
+        if GameViewController.soundEnabled {GameViewController.soundEnabled = false
+            soundButton.texture = SKTexture(imageNamed:"SoundOff")
+        }
+        else if !GameViewController.soundEnabled {GameViewController.soundEnabled = true
+            soundButton.texture = SKTexture(imageNamed:"SoundOn")
+        }
+        //Save to settings
+        if let controller = self.view?.window?.rootViewController as? GameViewController {
+            controller.saveSettings()
+        }
+    }
+    //TODO:
+    func toggleMusic() {
+        if GameViewController.musicEnabled {
+            GameViewController.musicEnabled = false
+            musicButton.texture = SKTexture(imageNamed:"MusicOff")
+        }
+        else if !GameViewController.musicEnabled {
+            GameViewController.musicEnabled = true
+            musicButton.texture = SKTexture(imageNamed:"MusicOn")
+        }
+        //Save to settings
+        if let controller = self.view?.window?.rootViewController as? GameViewController {
+            controller.saveSettings()
         }
     }
     
