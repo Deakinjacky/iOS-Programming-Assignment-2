@@ -15,6 +15,10 @@ class GameViewController: UIViewController {
     //Settings
     static var soundEnabled:Bool = true
     static var musicEnabled:Bool = true
+    
+    //Items
+    static var amountOfItem1:Int = 0
+    static var amountOfItem2:Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +26,7 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         loadSettings()
+        loadItems()
         
         //Make it 1 screen size
         let scene = GameScene(size: CGSize(width: 2048, height: 1536))
@@ -82,6 +87,42 @@ class GameViewController: UIViewController {
                 }
                 else {
                     GameViewController.soundEnabled = (unarchiver.decodeObject(forKey: "SoundEnabled") as! Bool)
+                }
+            }
+        }
+    }
+    
+    func dataFilePathItems() -> String {
+        return (documentsDirectory() as NSString).appendingPathComponent("Items.plist")
+    }
+    func saveItems() {
+        let data = NSMutableData()
+        let archiver = NSKeyedArchiver(forWritingWith: data)
+        
+        archiver.encode(GameViewController.amountOfItem1, forKey: "AmountOfItem1")
+        archiver.encode(GameViewController.amountOfItem1, forKey: "AmountOfItem2")
+        
+        archiver.finishEncoding()
+        data.write(toFile: dataFilePathItems(), atomically: true)
+    }
+    func loadItems() {
+        if FileManager.default.fileExists(atPath: dataFilePathItems()) {
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: dataFilePathItems())) {
+                let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
+
+                //Item1
+                if (unarchiver.decodeObject(forKey: "AmountOfItem1") as? Int) == nil {
+                    GameViewController.amountOfItem1 = unarchiver.decodeInteger(forKey: "AmountOfItem1")
+                }
+                else {
+                    GameViewController.amountOfItem1 = (unarchiver.decodeObject(forKey: "AmountOfItem1") as! Int)
+                }
+                //Item2
+                if (unarchiver.decodeObject(forKey: "AmountOfItem2") as? Int) == nil {
+                    GameViewController.amountOfItem2 = unarchiver.decodeInteger(forKey: "AmountOfItem2")
+                }
+                else {
+                    GameViewController.amountOfItem2 = (unarchiver.decodeObject(forKey: "AmountOfItem2") as! Int)
                 }
             }
         }

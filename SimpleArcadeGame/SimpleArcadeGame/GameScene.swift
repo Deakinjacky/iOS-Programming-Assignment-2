@@ -38,13 +38,20 @@ class GameScene: SKScene {
     var coinsLabel: SKLabelNode!
     var coins:Int = 0 {
         didSet {
-            coinsLabel.text = String("\(coins)")
+            coinsLabel?.text = String("\(coins)")
+            shopCoinsLabel?.text = String("\(coins)")
+            shopBuyButton1?.texture = SKTexture(imageNamed:"BuyCant")
+            shopBuyButton2?.texture = SKTexture(imageNamed:"BuyCant")
         }
     }
+    var shopCoinsLabel:SKLabelNode!
     
     //Shop
     var shopButton: SKSpriteNode!
     var shopBackground:SKSpriteNode!
+    var shopBuyButton1:SKSpriteNode!
+    var shopBuyButton2:SKSpriteNode!
+    var crossButton:SKSpriteNode!
     //Leaderboard
     var leaderboardButton:SKSpriteNode!
     
@@ -127,11 +134,21 @@ class GameScene: SKScene {
                 invokeButton.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 invoke()
             }
-            //TODO:
             if shopButton.contains(touchPosition) {
                 shopButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]),completion:{[unowned self] in self.showShop()})
             }
-            else if leaderboardButton.contains(touchPosition) {
+            else if crossButton.contains(touchPosition) {
+                crossButton.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]),completion:{[unowned self] in self.hideShop()})
+            }
+            else if shopBuyButton1.contains(touchPosition) {
+                shopBuyButton1.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
+                buyItem(cost: 50, itemNumber: 1)
+            }
+            else if shopBuyButton2.contains(touchPosition) {
+                shopBuyButton2.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
+                buyItem(cost: 50, itemNumber: 2)
+            }
+            if leaderboardButton.contains(touchPosition) {
                 leaderboardButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
             }
             if soundButton.contains(touchPosition) {
@@ -262,7 +279,7 @@ class GameScene: SKScene {
         coinsLabel.horizontalAlignmentMode = .left
         uiNode.addChild(coinsLabel)
         
-        coinsIcon = SKSpriteNode(texture: SKTexture(imageNamed: "Coin"))
+        coinsIcon = SKSpriteNode(texture: SKTexture(imageNamed: "CoinIcon"))
         if UIDevice.current.userInterfaceIdiom == .pad {
             coinsIcon.position = CGPoint(x: size.width*0.04, y: size.height*0.84)
         }
@@ -270,7 +287,7 @@ class GameScene: SKScene {
             coinsIcon.position = CGPoint(x: size.width*0.04, y: playableRect.maxY*0.84)
         }
         coinsIcon.zPosition = 4
-        coinsIcon.size = CGSize(width: 85, height: 85)
+        coinsIcon.size = CGSize(width: 60, height: 100)
         coinsIcon.name = "CoinsIcon"
         uiNode.addChild(coinsIcon)
         
@@ -320,12 +337,7 @@ class GameScene: SKScene {
         
         //Tutorial
         tutorialPage = SKSpriteNode(texture: SKTexture(imageNamed:"tut1"), color: SKColor.clear, size: CGSize(width: 800, height: 590))
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            
-        }
-        else if UIDevice.current.userInterfaceIdiom == .phone {
-            tutorialPage.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.75)
-        }
+        tutorialPage.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.75)
         tutorialPage.zPosition = 5
         tutorialPage.alpha = 0.0
         uiNode.addChild(tutorialPage)
@@ -673,6 +685,10 @@ class GameScene: SKScene {
         //startingHealthPoint = healthPoints
         
         //Show Tutorial
+        tutorialPage.position.y = CGFloat(size.height*1.5)
+        tutorialPage.removeAllActions()
+        tutorialPage.alpha = 1.0
+        tutorialPage.run(SKAction.moveTo(y: playableRect.maxY*0.75, duration: 0.5))
         showTutorial()
     }
     
@@ -697,15 +713,6 @@ class GameScene: SKScene {
     
     //Tutorial
     func showTutorial() {
-        tutorialPage.alpha = 0.0
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            
-        }
-        else if UIDevice.current.userInterfaceIdiom == .phone {
-            tutorialPage.position.y = playableRect.maxY*0.75
-        }
-        
         tutorialPage.run(SKAction.fadeAlpha(to: 1.0, duration: 2.0),completion:{[unowned self] in
             self.tutorialPage.run(SKAction.repeatForever(SKAction.animate(with: self.tutorialAnim, timePerFrame: 0.20)),withKey:"TutorialAnim")
         })
@@ -713,25 +720,200 @@ class GameScene: SKScene {
     
     //TODO: Shop
     func createShop() {
+        shopBackground = SKSpriteNode(texture: SKTexture(imageNamed:"ShopBg"), color: SKColor.clear, size: CGSize(width: 875, height: 1050))
+        shopBackground.zPosition = 10
+        shopBackground.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.57)
+        shopBackground.alpha = 0.0
+        uiNode.addChild(shopBackground)
         
+        shopBuyButton1 = SKSpriteNode(texture: SKTexture(imageNamed: "BuyButton"), color: SKColor.clear, size: CGSize(width: 130, height: 130))
+        shopBuyButton1.zPosition = 11
+        shopBuyButton1.position = CGPoint(x: size.width*0.615, y: playableRect.maxY*0.71)
+        shopBuyButton1.alpha = 0.0
+        uiNode.addChild(shopBuyButton1)
+        
+        shopBuyButton2 = SKSpriteNode(texture: SKTexture(imageNamed: "BuyButton"), color: SKColor.clear, size: CGSize(width: 130, height: 130))
+        shopBuyButton2.zPosition = 11
+        shopBuyButton2.position = CGPoint(x: size.width*0.615, y: playableRect.maxY*0.539)
+        shopBuyButton2.alpha = 0.0
+        uiNode.addChild(shopBuyButton2)
+        
+        crossButton = SKSpriteNode(texture: SKTexture(imageNamed:"CrossButton"), color: SKColor.clear, size: CGSize(width: 150, height: 150))
+        crossButton.zPosition = 11
+        crossButton.position = CGPoint(x: size.width*0.69, y: playableRect.maxY*0.87)
+        crossButton.alpha = 0.0
+        uiNode.addChild(crossButton)
+        
+        shopCoinsLabel = SKLabelNode()
+        shopCoinsLabel.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.23)
+        shopCoinsLabel.zPosition = 11
+        shopCoinsLabel.text = String("\(coins)")
+        shopCoinsLabel.fontName = "Palatino-Bold"
+        shopCoinsLabel.fontColor = SKColor.white
+        shopCoinsLabel.fontSize = 70
+        shopCoinsLabel.verticalAlignmentMode = .center
+        shopCoinsLabel.horizontalAlignmentMode = .center
+        shopCoinsLabel.alpha = 0.0
+        uiNode.addChild(shopCoinsLabel)
     }
     func showShop() {
-        hideEverything()
+        hideEverything(excludeButtons: false)
+        if coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
+        else {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyCant");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyCant")}
         worldNode.run(SKAction.wait(forDuration: 0.5),completion:{[unowned self] in
-            
+            self.shopBackground.position.y = CGFloat(self.playableRect.maxY*0.57)
+            self.shopBackground.run(SKAction.fadeIn(withDuration: 0.5))
+            self.shopBuyButton1.position.y = CGFloat(self.playableRect.maxY*0.71)
+            self.shopBuyButton1.run(SKAction.fadeIn(withDuration: 0.5))
+            self.shopBuyButton2.position.y = CGFloat(self.playableRect.maxY*0.539)
+            self.shopBuyButton2.run(SKAction.fadeIn(withDuration: 0.5))
+            self.crossButton.position.y = CGFloat(self.playableRect.maxY*0.87)
+            self.crossButton.run(SKAction.fadeIn(withDuration: 0.5))
+            self.shopCoinsLabel.position.y = CGFloat(self.playableRect.maxY*0.23)
+            self.shopCoinsLabel.text = "\(self.coins)"
+            self.shopCoinsLabel.run(SKAction.fadeIn(withDuration: 0.5))
         })
     }
+    func hideShop() {
+        self.shopBackground.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.shopBackground.position.y = CGFloat(self.playableRect.maxY*0.57)})
+        self.shopBuyButton1.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.shopBuyButton1.position.y = CGFloat(self.playableRect.maxY*0.57)})
+        self.shopBuyButton2.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.shopBuyButton2.position.y = CGFloat(self.playableRect.maxY*0.57)})
+        self.crossButton.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.crossButton.position.y = CGFloat(self.playableRect.maxY*0.57)})
+        self.shopCoinsLabel.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.showEverything()})
+    }
+    func buyItem(cost:Int, itemNumber:Int) {
+        if coins >= cost {
+            if itemNumber == 1 {/*TODO: Buy item1*/coins-=50}
+            else if itemNumber == 2 {/*TODO: Buy item2*/coins-=50}
+            //Image
+            if coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
+            else {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyCant");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyCant")}
+            
+            //TODO: Play soundFX file
+            //TODO: -Money animation
+            
+            //Save to Items plist - TODO: Save items when defeat screen is shown
+            if let controller = self.view?.window?.rootViewController as? GameViewController {
+                controller.saveItems()
+            }
+        }
+        else {/*TODO: ERROR Sound*/}
+    }
     
-    //TODO: Hide everything (Shop/Leader button tapped OR Starting game)
-    func hideEverything() {
-        //Tutorial
+    //TODO: Hide everything (Shop/Leader button tapped OR Starting game) //TODO: CAll in Start game with exclude = true
+    func hideEverything(excludeButtons: Bool) {
+        //Top Elements
+        scoreLabel.alpha = 1.0
+        scoreLabel.removeAllActions()
+        scoreLabel.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
+        highScoreLabel.alpha = 1.0
+        highScoreLabel.removeAllActions()
+        highScoreLabel.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
         tutorialPage.removeAllActions()
         tutorialPage.alpha = 1.0
         tutorialPage.run(SKAction.moveTo(y: size.height*1.5, duration: 0.5))
         
+        //Buttons
+        invokeRemoveAll()
+        if !excludeButtons {
+            button1.removeAllActions()
+            button1.alpha = 1.0
+            button1.run(SKAction.moveTo(y: -size.height*0.37, duration: 0.5))
+            button2.removeAllActions()
+            button2.alpha = 1.0
+            button2.run(SKAction.moveTo(y: -size.height*0.37, duration: 0.5))
+            button3.removeAllActions()
+            button3.alpha = 1.0
+            button3.run(SKAction.moveTo(y: -size.height*0.37, duration: 0.5))
+            invokeButton.removeAllActions()
+            invokeButton.alpha = 1.0
+            invokeButton.run(SKAction.moveTo(y: -size.height*0.53, duration: 0.5))
+        }
+        //Left elements
+        coinsLabel.alpha = 1.0
+        coinsLabel.run(SKAction.moveTo(x: -size.width*0.4, duration: 0.5))
+        coinsIcon.alpha = 1.0
+        coinsIcon.run(SKAction.moveTo(x: -size.width*0.4, duration: 0.5))
+        soundButton.alpha = 1.0
+        soundButton.run(SKAction.moveTo(x: -size.width*0.4, duration: 0.5))
+        musicButton.alpha = 1.0
+        musicButton.run(SKAction.moveTo(x: -size.width*0.4, duration: 0.5))
+        
+        //Right elements
         initialEnemy.run(SKAction.fadeOut(withDuration: 0.5))
+        shopButton.removeAllActions()
+        shopButton.alpha = 1.0
+        shopButton.run(SKAction.moveTo(y: -size.height*1.4, duration: 0.5))
+        leaderboardButton.removeAllActions()
+        leaderboardButton.alpha = 1.0
+        leaderboardButton.run(SKAction.moveTo(y: -size.height*1.4, duration: 0.5))
     }
     func showEverything() {
+        //Top Elements
+        scoreLabel.alpha = 1.0
+        scoreLabel.removeAllActions()
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            scoreLabel.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            scoreLabel.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
+        }
+        highScoreLabel.alpha = 1.0
+        highScoreLabel.removeAllActions()
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            highScoreLabel.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            highScoreLabel.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
+        }
+        tutorialPage.removeAllActions()
+        tutorialPage.alpha = 1.0
+        tutorialPage.run(SKAction.moveTo(y: playableRect.maxY*0.75, duration: 0.5))
+        showTutorial()
+        
+        //Buttons
+        invokeRemoveAll()
+        button1.removeAllActions()
+        button1.alpha = 1.0
+        button1.run(SKAction.moveTo(y: playableRect.maxY*0.38, duration: 0.5))
+        button2.removeAllActions()
+        button2.alpha = 1.0
+        button2.run(SKAction.moveTo(y: playableRect.maxY*0.38, duration: 0.5))
+        button3.removeAllActions()
+        button3.alpha = 1.0
+        button3.run(SKAction.moveTo(y: playableRect.maxY*0.38, duration: 0.5))
+        invokeButton.removeAllActions()
+        invokeButton.alpha = 1.0
+        invokeButton.run(SKAction.moveTo(y: playableRect.maxY*0.22, duration: 0.5))
+        
+        //Left elements
+        coinsLabel.alpha = 1.0
+        coinsLabel.run(SKAction.moveTo(x: size.width*0.072, duration: 0.5))
+        coinsIcon.alpha = 1.0
+        coinsIcon.run(SKAction.moveTo(x: size.width*0.04, duration: 0.5))
+        soundButton.alpha = 1.0
+        soundButton.run(SKAction.moveTo(x: size.width*0.05, duration: 0.5))
+        musicButton.alpha = 1.0
+        musicButton.run(SKAction.moveTo(x: size.width*0.05, duration: 0.5))
+        
+        //Right elements
+        initialEnemy.run(SKAction.fadeIn(withDuration: 1.0))
+        shopButton.removeAllActions()
+        shopButton.alpha = 1.0
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            shopButton.run(SKAction.moveTo(y: size.height*0.22, duration: 0.5))
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            shopButton.run(SKAction.moveTo(y: playableRect.maxY*0.22, duration: 0.5))
+        }
+        leaderboardButton.removeAllActions()
+        leaderboardButton.alpha = 1.0
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            leaderboardButton.run(SKAction.moveTo(y: size.height*0.36, duration: 0.5))
+        }
+        else if UIDevice.current.userInterfaceIdiom == .phone {
+            leaderboardButton.run(SKAction.moveTo(y: playableRect.maxY*0.36, duration: 0.5))
+        }
         
     }
     
