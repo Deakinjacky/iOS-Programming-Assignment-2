@@ -1037,7 +1037,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "BlueEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1050,7 +1050,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "GreenEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1063,7 +1063,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "YellowEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1076,7 +1076,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "PinkEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1089,7 +1089,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "FastEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1102,7 +1102,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "ChargeEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1115,7 +1115,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "InvisEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1128,7 +1128,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin()
+                showCoin(position: child.position)
                 if child.name == "DarkEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1578,10 +1578,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for child in worldNode.children {
             if let node = child as? Enemy {
                 if node.name!.contains("RedEnemy") {
-                    //explodeRedEnemy()
+                    explodeRedEnemy()
                 }
-                //TODO:
-                /*if node.name!.contains("GreenEnemy") {
+                if node.name!.contains("GreenEnemy") {
                     explodeGreenEnemy()
                 }
                 if node.name!.contains("BlueEnemy") {
@@ -1593,18 +1592,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if node.name!.contains("PinkEnemy") {
                     explodePinkEnemy()
                 }
-                if node.name!.contains("FastBlueEnemy") {
-                    explodeFastBlueEnemy()
+                if node.name!.contains("FastEnemy") {
+                    explodeFastEnemy()
                 }
-                if node.name!.contains("BrownEnemy") {
-                    explodeBrownEnemy()
+                if node.name!.contains("ChargeEnemy") {
+                    explodeChargeEnemy()
                 }
-                if node.name!.contains("PurpleEnemy") {
-                    explodePurpleEnemy()
+                if node.name!.contains("InvisEnemy") {
+                    explodeInvisEnemy()
                 }
-                if node.name!.contains("BlackEnemy") {
-                    explodeBlackEnemy()
-                }*/
+                if node.name!.contains("DarkEnemy") {
+                    explodeDarkEnemy()
+                }
             }
         }
     }
