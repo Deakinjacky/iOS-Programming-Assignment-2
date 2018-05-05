@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6DCCBABB209D74CF00C8E102 /* BlueEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBABA209D74CF00C8E102 /* BlueEnemy.swift */; };
+		6DCCBABD209D74E700C8E102 /* GreenEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBABC209D74E700C8E102 /* GreenEnemy.swift */; };
+		6DCCBABF209D750700C8E102 /* YellowEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBABE209D750700C8E102 /* YellowEnemy.swift */; };
+		6DCCBAC1209D773200C8E102 /* InvisEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBAC0209D773200C8E102 /* InvisEnemy.swift */; };
+		6DCCBAC3209D777D00C8E102 /* FastEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBAC2209D777D00C8E102 /* FastEnemy.swift */; };
+		6DCCBAC5209D77ED00C8E102 /* ChargeEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBAC4209D77ED00C8E102 /* ChargeEnemy.swift */; };
+		6DCCBAC7209D785C00C8E102 /* PinkEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBAC6209D785C00C8E102 /* PinkEnemy.swift */; };
+		6DCCBAC9209D78C000C8E102 /* DarknessEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCBAC8209D78C000C8E102 /* DarknessEnemy.swift */; };
 		6DCF464E2099589900441C4E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCF464D2099589900441C4E /* AppDelegate.swift */; };
 		6DCF46542099589900441C4E /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCF46532099589900441C4E /* GameScene.swift */; };
 		6DCF46562099589900441C4E /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCF46552099589900441C4E /* GameViewController.swift */; };
@@ -20,6 +28,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6DCCBABA209D74CF00C8E102 /* BlueEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueEnemy.swift; sourceTree = "<group>"; };
+		6DCCBABC209D74E700C8E102 /* GreenEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenEnemy.swift; sourceTree = "<group>"; };
+		6DCCBABE209D750700C8E102 /* YellowEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YellowEnemy.swift; sourceTree = "<group>"; };
+		6DCCBAC0209D773200C8E102 /* InvisEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvisEnemy.swift; sourceTree = "<group>"; };
+		6DCCBAC2209D777D00C8E102 /* FastEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastEnemy.swift; sourceTree = "<group>"; };
+		6DCCBAC4209D77ED00C8E102 /* ChargeEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargeEnemy.swift; sourceTree = "<group>"; };
+		6DCCBAC6209D785C00C8E102 /* PinkEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinkEnemy.swift; sourceTree = "<group>"; };
+		6DCCBAC8209D78C000C8E102 /* DarknessEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarknessEnemy.swift; sourceTree = "<group>"; };
 		6DCF464A2099589900441C4E /* SimpleArcadeGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleArcadeGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DCF464D2099589900441C4E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6DCF46532099589900441C4E /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -83,6 +99,14 @@
 			children = (
 				6DCF466A209988FB00441C4E /* Enemy.swift */,
 				6DCF466C2099891300441C4E /* RedEnemy.swift */,
+				6DCCBABA209D74CF00C8E102 /* BlueEnemy.swift */,
+				6DCCBABC209D74E700C8E102 /* GreenEnemy.swift */,
+				6DCCBABE209D750700C8E102 /* YellowEnemy.swift */,
+				6DCCBAC6209D785C00C8E102 /* PinkEnemy.swift */,
+				6DCCBAC2209D777D00C8E102 /* FastEnemy.swift */,
+				6DCCBAC4209D77ED00C8E102 /* ChargeEnemy.swift */,
+				6DCCBAC0209D773200C8E102 /* InvisEnemy.swift */,
+				6DCCBAC8209D78C000C8E102 /* DarknessEnemy.swift */,
 			);
 			path = Enemy;
 			sourceTree = "<group>";
@@ -158,12 +182,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DCCBABB209D74CF00C8E102 /* BlueEnemy.swift in Sources */,
+				6DCCBABD209D74E700C8E102 /* GreenEnemy.swift in Sources */,
 				6DCF46682099663000441C4E /* ElementIcon.swift in Sources */,
 				6DCF46542099589900441C4E /* GameScene.swift in Sources */,
+				6DCCBAC9209D78C000C8E102 /* DarknessEnemy.swift in Sources */,
+				6DCCBAC5209D77ED00C8E102 /* ChargeEnemy.swift in Sources */,
+				6DCCBABF209D750700C8E102 /* YellowEnemy.swift in Sources */,
 				6DCF466B209988FB00441C4E /* Enemy.swift in Sources */,
+				6DCCBAC1209D773200C8E102 /* InvisEnemy.swift in Sources */,
 				6DCF46562099589900441C4E /* GameViewController.swift in Sources */,
 				6DCF464E2099589900441C4E /* AppDelegate.swift in Sources */,
 				6DCF466620995E7E00441C4E /* Button.swift in Sources */,
+				6DCCBAC3209D777D00C8E102 /* FastEnemy.swift in Sources */,
+				6DCCBAC7209D785C00C8E102 /* PinkEnemy.swift in Sources */,
 				6DCF466D2099891300441C4E /* RedEnemy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

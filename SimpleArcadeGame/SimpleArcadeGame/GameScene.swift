@@ -37,7 +37,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     var scoreLabel: SKLabelNode!
-    var score:Int = 0 {
+    var score:Int = -1 {
         didSet {
             scoreLabel?.text = String("Score: \(score)")
         }
@@ -132,6 +132,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var gameWaitTime:Int = 4
     var redEnemyAnimation:[SKTexture]!
+    var blueEnemyAnimation:[SKTexture]!
+    var greenEnemyAnimation:[SKTexture]!
+    var yellowEnemyAnimation:[SKTexture]!
+    var pinkEnemyAnimation:[SKTexture]!
     
     // Provides a way to position elements relative to screen size. Taken from:
     // https:github.com/jozemite/Spritekit-Universal-Game
@@ -743,20 +747,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func invoke() {
         //Destroy enemy if combination matches
         if element1Name == "Red" && element2Name == "Red" && element3Name == "Red" {
-            //explodeRedEnemy()
-            explodeInitialRedEnemy()
+            explodeBasicEnemy()
         }
         else if element1Name == "Blue" && element2Name == "Blue" && element3Name == "Blue" {
-    
+            explodeBasicEnemy()
         }
         else if element1Name == "Green" && element2Name == "Green" && element3Name == "Green" {
-    
+            explodeBasicEnemy()
         }
         else if element1Name == "Red" && element2Name == "Blue" && element3Name == "Green" {
-       
+            explodeBasicEnemy()
         }
         else if element1Name == "Red" && element2Name == "Red" && element3Name == "Blue" {
-  
+            explodeBasicEnemy()
         }
         else if element1Name == "Blue" && element2Name == "Blue" && element3Name == "Green" {
   
@@ -828,8 +831,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         tutorialPage.run(SKAction.moveTo(y: playableRect.maxY*0.75, duration: 0.5))
         showTutorial()
     }
-    func spawnRedEnemy() {
-        let monster = RedEnemy()
+    func spawnBasicEnemy(colour:String) {
+        var monster = Enemy(SPD: 100)
         
         //Random Y Position Number
         let randomNumber = GKRandomDistribution(lowestValue: Int(playableRect.maxY*0.45), highestValue: Int(playableRect.maxY*0.85))
@@ -839,7 +842,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let spellCombo = SKSpriteNode(texture: SKTexture(imageNamed:"1"), color: SKColor.red, size: CGSize(width: 225, height: 50))
         spellCombo.zPosition = 0
         spellCombo.position = CGPoint(x: 0, y: size.height*0.07)
-        monster.addChild(spellCombo)
+        
+        if colour == "Red" {
+            monster = RedEnemy()
+            monster.name = "RedEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "1")
+        }
+        else if colour == "Blue" {
+            monster = BlueEnemy()
+            monster.name = "BlueEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "2")
+        }
+        else if colour == "Green" {
+            monster = GreenEnemy()
+            monster.name = "GreenEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "3")
+        }
+        else if colour == "Yellow" {
+            monster = YellowEnemy()
+            monster.name = "YellowEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "4")
+        }
+        else if colour == "Pink" {
+            monster = PinkEnemy()
+            monster.name = "PinkEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "5")
+        }
         
         //TODO: Physics Body to damage player
         monster.physicsBody = SKPhysicsBody(texture: monster.texture!, size: (monster.size))
@@ -849,18 +877,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         monster.zPosition = 0
         monster.position = CGPoint(x: size.width, y: randomYPosition)
         
-        monster.name = ("RedEnemy")
         worldNode.addChild(monster)
+        monster.addChild(spellCombo)
         
         monster.run(SKAction.move(to: CGPoint(x: -(size.width*0.05), y: monster.position.y), duration: monster.speedOfMonster))
+        
         //ANIMATION
-        monster.run(SKAction.repeatForever(SKAction.animate(with: redEnemyAnimation, timePerFrame: 0.1)))
+        if colour == "Red" {monster.run(SKAction.repeatForever(SKAction.animate(with: redEnemyAnimation, timePerFrame: 0.1)))}
+        else if colour == "Blue" {monster.run(SKAction.repeatForever(SKAction.animate(with: blueEnemyAnimation, timePerFrame: 0.1)))}
+        else if colour == "Green" {monster.run(SKAction.repeatForever(SKAction.animate(with: greenEnemyAnimation, timePerFrame: 0.1)))}
+        else if colour == "Yellow" {monster.run(SKAction.repeatForever(SKAction.animate(with: yellowEnemyAnimation, timePerFrame: 0.1)))}
+        else if colour == "Pink" {monster.run(SKAction.repeatForever(SKAction.animate(with: pinkEnemyAnimation, timePerFrame: 0.1)))}
     }
     
     //DESTROY
-    func explodeInitialRedEnemy() {
+    func explodeBasicEnemy() {
         for node in worldNode.children {
             if let child = node as? Enemy {
+                score += 1
                 if child.name == "InitialRedEnemy" {
                     child.removeAllActions()
                     //TODO: Explode Animation
@@ -873,12 +907,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     break;
                 }
                 else if child.name == "RedEnemy" {
-                    score += 1
                     //TODO: Coin
+                    //TODO: particle effect
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
                 }
+                else if child.name == "BlueEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
+                else if child.name == "GreenEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
+                else if child.name == "YellowEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
+                else if child.name == "PinkEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
+                
             }
         }
     }
@@ -894,14 +949,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //TODO:Change
             if self.score >= 0 {
-                if randomNumber > 0 {
-                    self.spawnRedEnemy()
+                if randomNumber == 0 {
+                    self.spawnBasicEnemy(colour: "Green")
                 }
-                else if randomNumber <= 4 {
-                    //self.spawnGreenBird()
+                else if randomNumber == 1 {
+                    self.spawnBasicEnemy(colour: "Blue")
                 }
-                else if randomNumber >= 5 {
-                    //self.spawnBlueBird()
+                else if randomNumber == 2 {
+                    self.spawnBasicEnemy(colour: "Yellow")
+                }
+                else if randomNumber > 2 {
+                    self.spawnBasicEnemy(colour: "Pink")
                 }
             }
             
@@ -914,6 +972,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for i in 1...2 {
             redEnemyAnimation.append(SKTexture(imageNamed:"Red"+String(i)))
         }
+        blueEnemyAnimation = [SKTexture]()
+        for i in 1...4 {
+            blueEnemyAnimation.append(SKTexture(imageNamed:"Blue"+String(i)))
+        }
+        greenEnemyAnimation = [SKTexture]()
+        for i in 1...4 {
+            greenEnemyAnimation.append(SKTexture(imageNamed:"Green"+String(i)))
+        }
+        yellowEnemyAnimation = [SKTexture]()
+        for i in 1...4 {
+            yellowEnemyAnimation.append(SKTexture(imageNamed:"Yellow"+String(i)))
+        }
+        pinkEnemyAnimation = [SKTexture]()
+        for i in 1...4 {
+            pinkEnemyAnimation.append(SKTexture(imageNamed:"Pink"+String(i)))
+        }
+        
     }
     
     //Tutorial
