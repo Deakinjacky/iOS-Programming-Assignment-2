@@ -31,28 +31,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var goal:SKSpriteNode!
     
     var highScoreLabel: SKLabelNode!
-    var highScore:Int = 0 {
-        didSet {
-            highScoreLabel.text = String("Best: \(highScore)")
-        }
-    }
     var scoreLabel: SKLabelNode!
     var score:Int = -1 {
         didSet {
             scoreLabel?.text = String("Score: \(score)")
+            defeatScoreLabel?.text = String("Score: \(score)")
         }
     }
     
     var coinsIcon: SKSpriteNode!
     var coinsLabel: SKLabelNode!
-    var coins:Int = 0 {
-        didSet {
-            coinsLabel?.text = String("\(coins)")
-            shopCoinsLabel?.text = String("\(coins)")
-            shopBuyButton1?.texture = SKTexture(imageNamed:"BuyCant")
-            shopBuyButton2?.texture = SKTexture(imageNamed:"BuyCant")
-        }
-    }
     var shopCoinsLabel:SKLabelNode!
     
     //Shop
@@ -146,6 +134,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var coinAnimation:[SKTexture]!
     
+    //Defeat
+    var defeatScreen:SKSpriteNode!
+    var defeatRetryButton:SKSpriteNode!
+    var defeatScoreLabel:SKLabelNode!
+    var defeatBestScoreLabel:SKLabelNode!
+    
     // Provides a way to position elements relative to screen size. Taken from:
     // https:github.com/jozemite/Spritekit-Universal-Game
     override init(size: CGSize) {
@@ -178,7 +172,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         initialiseUi()
         //Destroy this bird to start game
         spawnInitialRedEnemy()
-        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -237,6 +230,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 musicButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
                 toggleMusic()
             }
+            //Defeat
+            if defeatRetryButton.contains(touchPosition) {
+                defeatRetryButton.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
+                hideDefeatScreen()
+                showEverything()
+                spawnInitialRedEnemy()
+            }
         }
     }
     
@@ -262,7 +262,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             healthPoints -= 1
             if healthPoints <= 0 {
                 //Show Lose Screen
-                //showDefeatScreen()
+                showDefeatScreen()
             }
         }
     }
@@ -278,6 +278,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createShop()
         createItems()
         createEnemyAnimations()
+        createDefeatScreen()
         
         //Invisible bar placed at the left side of the screen - When enemy reaches the bar, players loses 1 health
         goal = SKSpriteNode(texture: nil, color: SKColor.green, size: CGSize(width: 10, height: playableRect.maxY))
@@ -293,7 +294,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         darknessScreen = SKSpriteNode(texture: nil, color: SKColor.black, size: CGSize(width: size.width, height: size.height))
         darknessScreen.position = CGPoint(x: size.width*0.5, y: size.height*0.5)
-        darknessScreen.zPosition = 1
+        darknessScreen.zPosition = 3
         darknessScreen.name = "DarknessScreen"
         darknessScreen.alpha = 0.0
         worldNode.addChild(darknessScreen)
@@ -360,7 +361,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             highScoreLabel.position = CGPoint(x: size.width*0.9, y: playableRect.maxY*0.93)
         }
         highScoreLabel.zPosition = 4
-        highScoreLabel.text = String("Best: \(highScore)")
+        highScoreLabel.text = String("Best: \(GameViewController.highScore)")
         highScoreLabel.fontName = "Palatino-Bold"
         highScoreLabel.fontColor = SKColor.black
         highScoreLabel.fontSize = 79
@@ -394,7 +395,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             coinsLabel.position = CGPoint(x: size.width*0.072, y: playableRect.maxY*0.84)
         }
         coinsLabel.zPosition = 4
-        coinsLabel.text = String("\(coins)")
+        coinsLabel.text = String("\(GameViewController.coins)")
         coinsLabel.fontName = "Palatino-Bold"
         coinsLabel.fontColor = SKColor.black
         coinsLabel.fontSize = 80
@@ -1339,7 +1340,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         shopCoinsLabel = SKLabelNode()
         shopCoinsLabel.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.23)
         shopCoinsLabel.zPosition = 11
-        shopCoinsLabel.text = String("\(coins)")
+        shopCoinsLabel.text = String("\(GameViewController.coins)")
         shopCoinsLabel.fontName = "Palatino-Bold"
         shopCoinsLabel.fontColor = SKColor.white
         shopCoinsLabel.fontSize = 70
@@ -1350,7 +1351,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func showShop() {
         hideEverything(excludeButtons: false)
-        if coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
+        if GameViewController.coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
         else {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyCant");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyCant")}
         worldNode.run(SKAction.wait(forDuration: 0.5),completion:{[unowned self] in
             self.shopBackground.position.y = CGFloat(self.playableRect.maxY*0.57)
@@ -1362,7 +1363,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.crossButton.position.y = CGFloat(self.playableRect.maxY*0.87)
             self.crossButton.run(SKAction.fadeIn(withDuration: 0.5))
             self.shopCoinsLabel.position.y = CGFloat(self.playableRect.maxY*0.23)
-            self.shopCoinsLabel.text = "\(self.coins)"
+            self.shopCoinsLabel.text = "\(GameViewController.coins)"
             self.shopCoinsLabel.run(SKAction.fadeIn(withDuration: 0.5))
         })
     }
@@ -1374,11 +1375,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.shopCoinsLabel.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.showEverything()})
     }
     func buyItem(cost:Int, itemNumber:Int) {
-        if coins >= cost {
-            if itemNumber == 1 {coins-=50; GameViewController.amountOfItem1+=1}
-            else if itemNumber == 2 {coins-=50; GameViewController.amountOfItem2+=1}
+        if GameViewController.coins >= cost {
+            if itemNumber == 1 {GameViewController.coins-=50; GameViewController.amountOfItem1+=1}
+            else if itemNumber == 2 {GameViewController.coins-=50; GameViewController.amountOfItem2+=1}
             //Image
-            if coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
+            if GameViewController.coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
             else {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyCant");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyCant")}
             
             //TODO: Play soundFX file
@@ -1386,7 +1387,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //Save to Items plist - TODO: Save items when defeat screen is shown
             if let controller = self.view?.window?.rootViewController as? GameViewController {
-                controller.saveItems()
+                controller.save()
+            }
+            
+            //Update labels
+            coinsLabel.text = "\(GameViewController.coins)"
+            shopCoinsLabel.text = "\(GameViewController.coins)"
+            
+            //Save
+            if let controller = self.view?.window?.rootViewController as? GameViewController {
+                controller.save()
             }
         }
         else {/*TODO: ERROR Sound*/}
@@ -1434,7 +1444,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         musicButton.run(SKAction.moveTo(x: -size.width*0.4, duration: 0.5))
         
         //Right elements
-        initialEnemy.run(SKAction.fadeOut(withDuration: 0.5))
+        initialEnemy?.run(SKAction.fadeOut(withDuration: 0.5))
         shopButton.removeAllActions()
         shopButton.alpha = 1.0
         shopButton.run(SKAction.moveTo(y: -size.height*1.4, duration: 0.5))
@@ -1444,13 +1454,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func showEverything() {
         //Top Elements
-        highScoreLabel.alpha = 1.0
-        highScoreLabel.removeAllActions()
+        highScoreLabel?.alpha = 1.0
+        highScoreLabel?.removeAllActions()
         if UIDevice.current.userInterfaceIdiom == .pad {
-            highScoreLabel.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
+            highScoreLabel?.run(SKAction.moveTo(y: size.height*0.93, duration: 0.5))
         }
         else if UIDevice.current.userInterfaceIdiom == .phone {
-            highScoreLabel.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
+            highScoreLabel?.run(SKAction.moveTo(y: playableRect.maxY*0.93, duration: 0.5))
         }
         tutorialPage.removeAllActions()
         tutorialPage.alpha = 1.0
@@ -1524,9 +1534,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else if !GameViewController.soundEnabled {GameViewController.soundEnabled = true
             soundButton.texture = SKTexture(imageNamed:"SoundOn")
         }
-        //Save to settings
+        //Save settings
         if let controller = self.view?.window?.rootViewController as? GameViewController {
-            controller.saveSettings()
+            controller.save()
         }
     }
     //TODO:
@@ -1539,9 +1549,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             GameViewController.musicEnabled = true
             musicButton.texture = SKTexture(imageNamed:"MusicOn")
         }
-        //Save to settings
+        //Save settings
         if let controller = self.view?.window?.rootViewController as? GameViewController {
-            controller.saveSettings()
+            controller.save()
         }
     }
     
@@ -1616,6 +1626,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         worldNode.addChild(item2Number)
     }
     func showItems() {
+        item1.alpha = 1.0
+        item1Number.alpha = 1.0
+        item2.alpha = 1.0
+        item2Number.alpha = 1.0
+        
         if UIDevice.current.userInterfaceIdiom == .pad {
             item1.run(SKAction.moveTo(y: size.height*0.23, duration: 0.5))
             item1Number.run(SKAction.moveTo(y: size.height*0.20, duration: 0.5))
@@ -1628,6 +1643,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             item2.run(SKAction.moveTo(y: playableRect.maxY*0.23, duration: 0.5))
             item2Number.run(SKAction.moveTo(y: playableRect.maxY*0.20, duration: 0.5))
         }
+    }
+    func hideItems() {
+        item1.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.item1.run(SKAction.moveTo(y: -self.size.height*1.5, duration: 0.1))})
+        item1Number.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.item1Number.run(SKAction.moveTo(y: -self.size.height*1.5, duration: 0.1))})
+        item2.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.item2.run(SKAction.moveTo(y: -self.size.height*1.5, duration: 0.1))})
+        item2Number.run(SKAction.fadeOut(withDuration: 0.2),completion:{[unowned self] in self.item2Number.run(SKAction.moveTo(y: -self.size.height*1.5, duration: 0.1))})
     }
     func useItem1() {
         guard GameViewController.amountOfItem1 >= 1 else {return}
@@ -1711,10 +1732,95 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             coin.removeFromParent()
         })
         
-        coins += 1
+        GameViewController.coins += 1
         
         //TODO: Coin Sound Effect
         
+    }
+    
+    //DEFEAT SCREEN
+    func createDefeatScreen() {
+        defeatScreen = SKSpriteNode(texture: SKTexture(imageNamed: "DefeatBg"), color: SKColor.clear, size: CGSize(width: 939, height: 830))
+        defeatScreen.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.64)
+        defeatScreen.zPosition = 11
+        defeatScreen.alpha = 0.0
+        worldNode.addChild(defeatScreen)
+        
+        defeatRetryButton = SKSpriteNode(texture: SKTexture(imageNamed: "RetryButton"), color: SKColor.clear, size: CGSize(width: 205, height: 205))
+        defeatRetryButton.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.398)
+        defeatRetryButton.zPosition = 12
+        defeatRetryButton.alpha = 0.0
+        worldNode.addChild(defeatRetryButton)
+        
+        defeatScoreLabel = SKLabelNode()
+        defeatScoreLabel.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.69)
+        defeatScoreLabel.zPosition = 12
+        defeatScoreLabel.text = "Score: \(score)"
+        defeatScoreLabel.fontName = "Palatino-Bold"
+        defeatScoreLabel.fontColor = SKColor.black
+        defeatScoreLabel.fontSize = 92
+        defeatScoreLabel.verticalAlignmentMode = .center
+        defeatScoreLabel.horizontalAlignmentMode = .center
+        defeatScoreLabel.alpha = 0.0
+        worldNode.addChild(defeatScoreLabel)
+        
+        defeatBestScoreLabel = SKLabelNode()
+        defeatBestScoreLabel.position = CGPoint(x: size.width*0.5, y: playableRect.maxY*0.58)
+        defeatBestScoreLabel.zPosition = 12
+        defeatBestScoreLabel.text = "Best: \(GameViewController.highScore)"
+        defeatBestScoreLabel.fontName = "Palatino-Bold"
+        defeatBestScoreLabel.fontColor = SKColor.black
+        defeatBestScoreLabel.fontSize = 90
+        defeatBestScoreLabel.verticalAlignmentMode = .center
+        defeatBestScoreLabel.horizontalAlignmentMode = .center
+        defeatBestScoreLabel.alpha = 0.0
+        worldNode.addChild(defeatBestScoreLabel)
+        
+        hideDefeatScreen()
+    }
+    func showDefeatScreen() {
+        guard healthPoints <= 0 else {return}
+        for child in worldNode.children {
+            if let node = child as? Enemy {
+                node.removeAllActions()
+                node.removeFromParent()
+            }
+        }
+        
+        scoreLabel.alpha = 0.0
+        darknessScreen.alpha = 0.0
+        self.removeAllActions()
+        invokeRemoveAll()
+        hideEverything(excludeButtons: false)
+        hideItems()
+        
+        if score > GameViewController.highScore {GameViewController.highScore = score}
+        highScoreLabel?.text = "Best: \(GameViewController.highScore)"
+        
+        defeatScreen.position.y = CGFloat(playableRect.maxY*0.64)
+        defeatScreen.alpha = 1.0
+        defeatRetryButton.position.y = CGFloat(playableRect.maxY*0.398)
+        defeatRetryButton.alpha = 1.0
+        defeatScoreLabel.position.y = CGFloat(playableRect.maxY*0.69)
+        defeatScoreLabel.alpha = 1.0
+        defeatBestScoreLabel.position.y = CGFloat(playableRect.maxY*0.58)
+        defeatBestScoreLabel.alpha = 1.0
+        
+        //Save high score and number of items
+        if let controller = self.view?.window?.rootViewController as? GameViewController {
+            controller.save()
+        }
+    }
+    func hideDefeatScreen() {
+        //Animate
+        defeatScreen.run(SKAction.moveTo(y: size.height*1.5, duration: 0.2),completion:{[unowned self] in self.defeatScreen.alpha = 0.0})
+        defeatRetryButton.run(SKAction.moveTo(y: size.height*1.5, duration: 0.2),completion:{[unowned self] in self.defeatRetryButton.alpha = 0.0})
+        defeatScoreLabel.run(SKAction.moveTo(y: size.height*1.5, duration: 0.2),completion:{[unowned self] in self.defeatScoreLabel.alpha = 0.0})
+        defeatBestScoreLabel.run(SKAction.moveTo(y: size.height*1.5, duration: 0.2),completion:{[unowned self] in self.defeatBestScoreLabel.alpha = 0.0})
+        
+        //Reset game
+        score = -1
+        healthPoints = 3
     }
     
     //Helper methods

@@ -19,14 +19,16 @@ class GameViewController: UIViewController {
     //Items
     static var amountOfItem1:Int = 60
     static var amountOfItem2:Int = 60
+    
+    static var highScore:Int = 0
+    static var coins:Int = 999
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         super.viewDidLoad()
         
-        loadSettings()
-        loadItems()
+        load()
         
         //Make it 1 screen size
         let scene = GameScene(size: CGSize(width: 2048, height: 1536))
@@ -55,21 +57,27 @@ class GameViewController: UIViewController {
     }
     
     func dataFilePath() -> String {
-        return (documentsDirectory() as NSString).appendingPathComponent("Settings.plist")
+        return (documentsDirectory() as NSString).appendingPathComponent("Level.plist")
     }
     
-    func saveSettings() {
+    func save() {
         let data = NSMutableData()
         let archiver = NSKeyedArchiver(forWritingWith: data)
         
         archiver.encode(GameViewController.musicEnabled, forKey: "MusicEnabled")
         archiver.encode(GameViewController.soundEnabled, forKey: "SoundEnabled")
         
+        archiver.encode(GameViewController.amountOfItem1, forKey: "AmountOfItem1")
+        archiver.encode(GameViewController.amountOfItem2, forKey: "AmountOfItem2")
+        
+        archiver.encode(GameViewController.highScore, forKey: "Highscore")
+        archiver.encode(GameViewController.coins, forKey: "Coins")
+        
         archiver.finishEncoding()
         data.write(toFile: dataFilePath(), atomically: true)
     }
     
-    func loadSettings() {
+    func load() {
         if FileManager.default.fileExists(atPath: dataFilePath()) {
             if let data = try? Data(contentsOf: URL(fileURLWithPath: dataFilePath())) {
                 let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
@@ -88,28 +96,6 @@ class GameViewController: UIViewController {
                 else {
                     GameViewController.soundEnabled = (unarchiver.decodeObject(forKey: "SoundEnabled") as! Bool)
                 }
-            }
-        }
-    }
-    
-    func dataFilePathItems() -> String {
-        return (documentsDirectory() as NSString).appendingPathComponent("Items.plist")
-    }
-    func saveItems() {
-        let data = NSMutableData()
-        let archiver = NSKeyedArchiver(forWritingWith: data)
-        
-        archiver.encode(GameViewController.amountOfItem1, forKey: "AmountOfItem1")
-        archiver.encode(GameViewController.amountOfItem1, forKey: "AmountOfItem2")
-        
-        archiver.finishEncoding()
-        data.write(toFile: dataFilePathItems(), atomically: true)
-    }
-    func loadItems() {
-        if FileManager.default.fileExists(atPath: dataFilePathItems()) {
-            if let data = try? Data(contentsOf: URL(fileURLWithPath: dataFilePathItems())) {
-                let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
-
                 //Item1
                 if (unarchiver.decodeObject(forKey: "AmountOfItem1") as? Int) == nil {
                     GameViewController.amountOfItem1 = unarchiver.decodeInteger(forKey: "AmountOfItem1")
@@ -124,6 +110,21 @@ class GameViewController: UIViewController {
                 else {
                     GameViewController.amountOfItem2 = (unarchiver.decodeObject(forKey: "AmountOfItem2") as! Int)
                 }
+                //High score
+                if (unarchiver.decodeObject(forKey: "Highscore") as? Int) == nil {
+                    GameViewController.highScore = unarchiver.decodeInteger(forKey: "Highscore")
+                }
+                else {
+                    GameViewController.highScore = (unarchiver.decodeObject(forKey: "Highscore") as! Int)
+                }
+                //Coins
+                if (unarchiver.decodeObject(forKey: "Coins") as? Int) == nil {
+                    GameViewController.coins = unarchiver.decodeInteger(forKey: "Coins")
+                }
+                else {
+                    GameViewController.coins = (unarchiver.decodeObject(forKey: "Coins") as! Int)
+                }
+                
             }
         }
     }
