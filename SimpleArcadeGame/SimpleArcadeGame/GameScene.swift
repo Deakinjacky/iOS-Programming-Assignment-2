@@ -144,6 +144,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //Used for darkness mechanic in SpawnComplexEnemies(_dark)
     var darknessScreen: SKSpriteNode!
     
+    var coinAnimation:[SKTexture]!
+    
     // Provides a way to position elements relative to screen size. Taken from:
     // https:github.com/jozemite/Spritekit-Universal-Game
     override init(size: CGSize) {
@@ -846,6 +848,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         showTutorial()
     }
     func spawnBasicEnemy(colour:String) {
+        guard colour == "Red" || colour == "Blue" || colour == "Green" || colour == "Yellow" || colour == "Pink" else {print("spawnBasicEnemy: Wrong parameter given.");return}
+        
         var monster = Enemy(SPD: 100)
         
         //Random Y Position Number
@@ -904,6 +908,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else if colour == "Pink" {monster.run(SKAction.repeatForever(SKAction.animate(with: pinkEnemyAnimation, timePerFrame: 0.1)))}
     }
     func spawnComplexEnemy(colour:String) {
+        guard colour == "Fast" || colour == "Charge" || colour == "Invis" || colour == "Dark" else {print("spawnComplexEnemy: Wrong parameter given.");return}
+        
         var monster = Enemy(SPD: 100)
         
         //Random Y Position Number
@@ -1018,7 +1024,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     break;
                 }
                 else if child.name == "RedEnemy" {
-                    //TODO: Coin
+                    showCoin(position: child.position)
                     //TODO: particle effect
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1031,6 +1037,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "BlueEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1043,6 +1050,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "GreenEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1055,6 +1063,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "YellowEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1067,6 +1076,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "PinkEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1079,6 +1089,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "FastEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1091,6 +1102,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "ChargeEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1103,6 +1115,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "InvisEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1115,6 +1128,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
+                showCoin()
                 if child.name == "DarkEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1136,7 +1150,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //TODO:Change
             if self.score >= 0 {
                 if randomNumber > 0 {
-                    self.spawnComplexEnemy(colour: "Dark")
+                    self.spawnBasicEnemy(colour: "Red")
                 }
                 else if randomNumber == 1 {
                     self.spawnBasicEnemy(colour: "Blue")
@@ -1189,6 +1203,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         darknessEnemyAnimation = [SKTexture]()
         for i in 1...2 {
             darknessEnemyAnimation.append(SKTexture(imageNamed:"Dark"+String(i)))
+        }
+        
+        //Coin animation
+        coinAnimation = [SKTexture]()
+        for i in 1...6 {
+            coinAnimation.append(SKTexture(imageNamed:"CoinRotate"+String(i)))
         }
     }
     
@@ -1587,6 +1607,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }*/
             }
         }
+    }
+    
+    func showCoin(position:CGPoint) {
+        let coin = SKSpriteNode(texture: SKTexture(imageNamed: "CoinRotate1"), color: SKColor.clear, size: CGSize(width: 80, height: 80))
+        coin.zPosition = 10
+        coin.position = position
+        worldNode.addChild(coin)
+        
+        //Flip animation
+        coin.run(SKAction.animate(with: coinAnimation, timePerFrame: 0.07))
+        coin.run(SKAction.sequence([SKAction.moveTo(y: position.y + (playableRect.maxY*0.08), duration: 0.15), SKAction.fadeOut(withDuration: 0.4)]), completion:{
+            coin.removeFromParent()
+        })
+        
+        coins += 1
+        
+        //TODO: Coin Sound Effect
+        
     }
     
     //Helper methods
