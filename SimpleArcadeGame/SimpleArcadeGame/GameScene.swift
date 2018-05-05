@@ -858,7 +858,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Spell Combination
         let spellCombo = SKSpriteNode(texture: SKTexture(imageNamed:"1"), color: SKColor.red, size: CGSize(width: 225, height: 50))
-        spellCombo.zPosition = 0
+        spellCombo.zPosition = 2
         spellCombo.position = CGPoint(x: 0, y: size.height*0.07)
         
         if colour == "Red" {
@@ -918,7 +918,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Spell Combination
         let spellCombo = SKSpriteNode(texture: SKTexture(imageNamed:"1"), color: SKColor.red, size: CGSize(width: 225, height: 50))
-        spellCombo.zPosition = 0
+        spellCombo.zPosition = 2
         spellCombo.position = CGPoint(x: 0, y: size.height*0.09)
         
         if colour == "Fast" {
@@ -1148,19 +1148,110 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             guard self.healthPoints > 0 else {return}
             
             //TODO:Change
-            if self.score >= 0 {
-                if randomNumber > 0 {
+            if self.score < 2 {
+                self.spawnBasicEnemy(colour: "Red")
+            }
+            else if self.score < 5 {
+                if randomNumber <= 1 {
                     self.spawnBasicEnemy(colour: "Red")
                 }
-                else if randomNumber == 1 {
+                else if randomNumber <= 4 {
                     self.spawnBasicEnemy(colour: "Blue")
                 }
-                else if randomNumber == 2 {
+                else if randomNumber > 4 {
+                    self.spawnBasicEnemy(colour: "Green")
+                }
+            }
+            else if self.score < 9 {
+                if randomNumber == 1 {
+                    self.spawnBasicEnemy(colour: "Blue")
+                }
+                else if randomNumber <= 4 {
                     self.spawnBasicEnemy(colour: "Yellow")
                 }
-                else if randomNumber > 2 {
+                else if randomNumber > 4 {
                     self.spawnBasicEnemy(colour: "Pink")
                 }
+            }
+            //Introduce Fast enemy
+            else if self.score < 14 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Pink")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Yellow")}
+                else if randomNumber > 2 {
+                    self.spawnComplexEnemy(colour: "Fast")
+                }
+            }
+            //Introduce Charge enemy
+            else if self.score < 18 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Blue")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Green")}
+                else if randomNumber > 2 {
+                    self.spawnComplexEnemy(colour: "Charge")
+                }
+            }
+            //Introduce Invis enemy
+            else if self.score < 22 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Pink")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Yellow")}
+                else if randomNumber > 2 {
+                    self.spawnComplexEnemy(colour: "Invis")
+                }
+            }
+            //Introduce Darkness enemy
+            else if self.score < 27 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue")}
+                else if randomNumber > 2 {
+                    self.spawnComplexEnemy(colour: "Dark")
+                }
+            }
+            //Spawn 2 enemies at once
+            else if self.score < 31 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red");self.spawnComplexEnemy(colour: "Dark")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis")}
+                else if randomNumber == 3 {self.spawnBasicEnemy(colour: "Green");self.spawnComplexEnemy(colour: "Fast")}
+                else if randomNumber == 4 {self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Charge")}
+                else if randomNumber == 5 {self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis")}
+                else if randomNumber == 6 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis")}
+            }
+            //Increase spawn frequency (reduce GameWaitTime)
+            else if self.score < 35 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red");self.spawnComplexEnemy(colour: "Dark")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis")}
+                else if randomNumber == 3 {self.spawnBasicEnemy(colour: "Green");self.spawnComplexEnemy(colour: "Fast")}
+                else if randomNumber == 4 {self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Charge")}
+                else if randomNumber == 5 {self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis")}
+                else if randomNumber == 6 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis")}
+                self.gameWaitTime = 3
+            }
+            //Higher frequency
+            else if self.score < 40 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red");self.spawnComplexEnemy(colour: "Dark");self.spawnBasicEnemy(colour: "Red")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Green");}
+                else if randomNumber == 3 {self.spawnBasicEnemy(colour: "Green");self.spawnComplexEnemy(colour: "Fast");self.spawnBasicEnemy(colour: "Blue")}
+                else if randomNumber == 4 {self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Charge");self.spawnBasicEnemy(colour: "Yellow")}
+                else if randomNumber == 5 {self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
+                else if randomNumber == 6 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
+            }
+            //Faster spawn
+            else if self.score < 52 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red");self.spawnComplexEnemy(colour: "Dark");self.spawnBasicEnemy(colour: "Red")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Green");}
+                else if randomNumber == 3 {self.spawnBasicEnemy(colour: "Green");self.spawnComplexEnemy(colour: "Fast");self.spawnBasicEnemy(colour: "Blue")}
+                else if randomNumber == 4 {self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Charge");self.spawnBasicEnemy(colour: "Yellow")}
+                else if randomNumber == 5 {self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
+                else if randomNumber == 6 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
+                self.gameWaitTime = 2
+            }
+            //Increased Frequency
+            else if self.score > 52 {
+                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red");self.spawnComplexEnemy(colour: "Dark");self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Fast")}
+                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Green");self.spawnComplexEnemy(colour: "Invis")}
+                else if randomNumber == 3 {self.spawnBasicEnemy(colour: "Green");self.spawnComplexEnemy(colour: "Fast");self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Fast")}
+                else if randomNumber == 4 {self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Charge");self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Dark")}
+                else if randomNumber == 5 {self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Charge")}
+                else if randomNumber == 6 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis")}
+                self.gameWaitTime = 2
             }
             
             self.spawnEnemy(randomNumber: randomNextNumber)

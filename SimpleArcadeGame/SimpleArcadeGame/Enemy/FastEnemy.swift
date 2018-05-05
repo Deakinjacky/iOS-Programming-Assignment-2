@@ -12,7 +12,7 @@ class FastEnemy: Enemy {
     
     init() {
         super.init(SPD: 16)
-        self.texture = SKTexture(imageNamed: "Fast1")
+        self.texture = SKTexture(imageNamed: "Speed1")
         self.size = CGSize(width: 280, height: 190)
     }
     
