@@ -216,7 +216,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 shopBuyButton2.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
                 buyItem(cost: 50, itemNumber: 2)
             }
-            //Items - TODO:
+            //Items
             if item1.contains(touchPosition) {
                 item1.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
                 useItem1()
@@ -509,7 +509,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         soundButton = SKSpriteNode(texture: SKTexture(imageNamed: "SoundOn"), color: SKColor.clear, size: CGSize(width: 150, height: 150))
         soundButton.zPosition = 2
         if UIDevice.current.userInterfaceIdiom == .pad {
-            
+            soundButton.position = CGPoint(x: size.width*0.05, y: size.height*0.22)
         }
         else if UIDevice.current.userInterfaceIdiom == .phone {
             soundButton.position = CGPoint(x: size.width*0.05, y: playableRect.maxY*0.22)
@@ -518,7 +518,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         musicButton = SKSpriteNode(texture: SKTexture(imageNamed:"MusicOn"), color: SKColor.clear, size: CGSize(width: 150, height: 150))
         musicButton.zPosition = 2
         if UIDevice.current.userInterfaceIdiom == .pad {
-            
+            musicButton.position = CGPoint(x: size.width*0.05, y: size.height*0.36)
         }
         else if UIDevice.current.userInterfaceIdiom == .phone {
             musicButton.position = CGPoint(x: size.width*0.05, y: playableRect.maxY*0.36)
@@ -1037,8 +1037,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "BlueEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1050,8 +1050,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "GreenEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1063,8 +1063,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "YellowEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1076,8 +1076,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "PinkEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1089,8 +1089,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "FastEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1102,8 +1102,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "ChargeEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1115,8 +1115,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "InvisEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1128,8 +1128,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
-                showCoin(position: child.position)
                 if child.name == "DarkEnemy" {
+                    showCoin(position: child.position)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1310,7 +1310,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         })
     }
     
-    //TODO: Shop
+    //Shop
     func createShop() {
         shopBackground = SKSpriteNode(texture: SKTexture(imageNamed:"ShopBg"), color: SKColor.clear, size: CGSize(width: 875, height: 1050))
         shopBackground.zPosition = 10
@@ -1375,8 +1375,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func buyItem(cost:Int, itemNumber:Int) {
         if coins >= cost {
-            if itemNumber == 1 {/*TODO: Buy item1*/coins-=50}
-            else if itemNumber == 2 {/*TODO: Buy item2*/coins-=50}
+            if itemNumber == 1 {coins-=50; GameViewController.amountOfItem1+=1}
+            else if itemNumber == 2 {coins-=50; GameViewController.amountOfItem2+=1}
             //Image
             if coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
             else {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyCant");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyCant")}
@@ -1392,7 +1392,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else {/*TODO: ERROR Sound*/}
     }
     
-    //TODO: Hide everything (Shop/Leader button tapped OR Starting game)
+    //Hide everything (Shop/Leader button tapped OR Starting game)
     func hideEverything(excludeButtons: Bool) {
         //Top Elements
         highScoreLabel.alpha = 1.0
