@@ -11,7 +11,7 @@ import SpriteKit
 class InvisEnemy: Enemy {
     
     init() {
-        super.init(SPD: 26)
+        super.init(SPD: 27)
         self.texture = SKTexture(imageNamed: "Invis1")
         self.size = CGSize(width: 240, height: 240)
     }

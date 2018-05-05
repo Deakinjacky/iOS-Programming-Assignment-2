@@ -11,7 +11,7 @@ import SpriteKit
 class DarknessEnemy: Enemy {
     
     init() {
-        super.init(SPD: 30)
+        super.init(SPD: 23)
         self.texture = SKTexture(imageNamed: "Dark1")
         self.size = CGSize(width: 400, height: 190)
     }

@@ -136,6 +136,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var greenEnemyAnimation:[SKTexture]!
     var yellowEnemyAnimation:[SKTexture]!
     var pinkEnemyAnimation:[SKTexture]!
+    var fastEnemyAnimation:[SKTexture]!
+    var chargeEnemyAnimation:[SKTexture]!
+    var invisEnemyAnimation:[SKTexture]!
+    var darknessEnemyAnimation:[SKTexture]!
+    
+    //Used for darkness mechanic in SpawnComplexEnemies(_dark)
+    var darknessScreen: SKSpriteNode!
     
     // Provides a way to position elements relative to screen size. Taken from:
     // https:github.com/jozemite/Spritekit-Universal-Game
@@ -281,6 +288,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         goal.physicsBody?.usesPreciseCollisionDetection = true
         goal.name = "Goal"
         worldNode.addChild(goal)
+        
+        darknessScreen = SKSpriteNode(texture: nil, color: SKColor.black, size: CGSize(width: size.width, height: size.height))
+        darknessScreen.position = CGPoint(x: size.width*0.5, y: size.height*0.5)
+        darknessScreen.zPosition = 1
+        darknessScreen.name = "DarknessScreen"
+        darknessScreen.alpha = 0.0
+        worldNode.addChild(darknessScreen)
     }
     
     func createButtons() {
@@ -747,31 +761,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func invoke() {
         //Destroy enemy if combination matches
         if element1Name == "Red" && element2Name == "Red" && element3Name == "Red" {
-            explodeBasicEnemy()
+            explodeRedEnemy()
         }
         else if element1Name == "Blue" && element2Name == "Blue" && element3Name == "Blue" {
-            explodeBasicEnemy()
+            explodeBlueEnemy()
         }
         else if element1Name == "Green" && element2Name == "Green" && element3Name == "Green" {
-            explodeBasicEnemy()
+            explodeGreenEnemy()
         }
         else if element1Name == "Red" && element2Name == "Blue" && element3Name == "Green" {
-            explodeBasicEnemy()
+            explodeYellowEnemy()
         }
         else if element1Name == "Red" && element2Name == "Red" && element3Name == "Blue" {
-            explodeBasicEnemy()
+            explodePinkEnemy()
         }
         else if element1Name == "Blue" && element2Name == "Blue" && element3Name == "Green" {
-  
+            explodeFastEnemy()
         }
         else if element1Name == "Green" && element2Name == "Green" && element3Name == "Red" {
-  
+            explodeChargeEnemy()
         }
         else if element1Name == "Green" && element2Name == "Blue" && element3Name == "Green" {
-
+            explodeInvisEnemy()
         }
         else if element1Name == "Blue" && element2Name == "Red" && element3Name == "Red" {
-     
+            explodeDarkEnemy()
         }
         else {}
         
@@ -889,9 +903,106 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else if colour == "Yellow" {monster.run(SKAction.repeatForever(SKAction.animate(with: yellowEnemyAnimation, timePerFrame: 0.1)))}
         else if colour == "Pink" {monster.run(SKAction.repeatForever(SKAction.animate(with: pinkEnemyAnimation, timePerFrame: 0.1)))}
     }
+    func spawnComplexEnemy(colour:String) {
+        var monster = Enemy(SPD: 100)
+        
+        //Random Y Position Number
+        let randomNumber = GKRandomDistribution(lowestValue: Int(playableRect.maxY*0.45), highestValue: Int(playableRect.maxY*0.85))
+        let randomYPosition = CGFloat(randomNumber.nextInt())
+        
+        //Spell Combination
+        let spellCombo = SKSpriteNode(texture: SKTexture(imageNamed:"1"), color: SKColor.red, size: CGSize(width: 225, height: 50))
+        spellCombo.zPosition = 0
+        spellCombo.position = CGPoint(x: 0, y: size.height*0.09)
+        
+        if colour == "Fast" {
+            monster = FastEnemy()
+            monster.name = "FastEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "6")
+        }
+        else if colour == "Charge" {
+            monster = ChargeEnemy()
+            monster.name = "ChargeEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "7")
+        }
+        else if colour == "Invis" {
+            monster = InvisEnemy()
+            monster.name = "InvisEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "8")
+        }
+        else if colour == "Dark" {
+            monster = DarknessEnemy()
+            monster.name = "DarkEnemy"
+            spellCombo.texture = SKTexture(imageNamed: "9")
+        }
+        
+        //TODO: Physics Body to damage player
+        monster.physicsBody = SKPhysicsBody(texture: monster.texture!, size: (monster.size))
+        monster.physicsBody?.categoryBitMask = PhysicsCategory.enemy
+        monster.physicsBody?.collisionBitMask = PhysicsCategory.none
+        monster.physicsBody?.contactTestBitMask = PhysicsCategory.goal
+        monster.zPosition = 0
+        monster.position = CGPoint(x: size.width, y: randomYPosition)
+        
+        worldNode.addChild(monster)
+        monster.addChild(spellCombo)
+        
+        monster.run(SKAction.move(to: CGPoint(x: -(size.width*0.05), y: monster.position.y), duration: monster.speedOfMonster),withKey:"Move")
+        
+        //MECHANICS
+        
+        //Charge Mechanic
+        if colour == "Charge" {
+            monster.removeAction(forKey: "Move")
+            monster.run(SKAction.move(to: CGPoint(x: size.width*0.8, y: monster.position.y), duration: monster.speedOfMonster), completion: {[unowned self] in
+                //Flap Anim for 10s
+                monster.run(SKAction.wait(forDuration: 5), completion: {
+                    monster.removeAction(forKey: "ChargeEnemyMove")})
+                //Charge at Goal after 10s
+                monster.run(SKAction.wait(forDuration: 15), completion:{[unowned self] in
+                    monster.run(SKAction.move(to: CGPoint(x: -(self.size.width*0.05), y: monster.position.y), duration: 3), withKey: "ChargeEnemyMove")
+                    monster.run(SKAction.repeatForever(SKAction.animate(with: self.chargeEnemyAnimation, timePerFrame: 0.03)))})
+            })
+        }
+        //Invis Mechanic
+        else if colour == "Invis" {
+            //Random invis number
+            let randomInvisNumber = GKRandomDistribution(lowestValue: 1, highestValue: 12)
+            let randomInvisX = randomInvisNumber.nextInt()
+            let invisOutTime = 7 + Int(randomInvisX)
+            
+            monster.run(SKAction.wait(forDuration: TimeInterval(randomInvisX)), completion: {
+                monster.run(SKAction.fadeOut(withDuration: 2))})
+            monster.run(SKAction.wait(forDuration: TimeInterval(invisOutTime)), completion: {
+                monster.run(SKAction.fadeIn(withDuration: 2))})
+            //Hide the spell combination as well
+            spellCombo.run(SKAction.wait(forDuration: TimeInterval(randomInvisX)),completion:{
+                spellCombo.run(SKAction.fadeOut(withDuration: 2))})
+            spellCombo.run(SKAction.wait(forDuration: TimeInterval(invisOutTime)),completion:{
+                spellCombo.run(SKAction.fadeIn(withDuration: 2))})
+        }
+        //Darkness Mechanic
+        else if colour == "Dark" {
+            //Random darkness number
+            let randomDarknessNumber = GKRandomDistribution(lowestValue: 1, highestValue: 10)
+            let randomDarknessX = randomDarknessNumber.nextInt()
+            let darknessOutTime = 2 + Int(randomDarknessX)
+            
+            monster.run(SKAction.wait(forDuration: TimeInterval(randomDarknessX)), completion: {[unowned self] in
+                self.darknessScreen.run(SKAction.fadeIn(withDuration: 1))})
+            self.run(SKAction.wait(forDuration: TimeInterval(darknessOutTime)), completion: {[unowned self] in
+                self.darknessScreen.run(SKAction.fadeOut(withDuration: 1))})
+        }
+        
+        //ANIMATION
+        if colour == "Fast" {monster.run(SKAction.repeatForever(SKAction.animate(with: fastEnemyAnimation, timePerFrame: 0.08)))}
+        else if colour == "Charge" {monster.run(SKAction.repeatForever(SKAction.animate(with: chargeEnemyAnimation, timePerFrame: 0.1)))}
+        else if colour == "Invis" {monster.run(SKAction.repeatForever(SKAction.animate(with: invisEnemyAnimation, timePerFrame: 0.1)))}
+        else if colour == "Dark" {monster.run(SKAction.repeatForever(SKAction.animate(with: darknessEnemyAnimation, timePerFrame: 0.1)))}
+    }
     
     //DESTROY
-    func explodeBasicEnemy() {
+    func explodeRedEnemy() {
         for node in worldNode.children {
             if let child = node as? Enemy {
                 score += 1
@@ -913,27 +1024,102 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     child.removeFromParent()
                     break;
                 }
-                else if child.name == "BlueEnemy" {
+            }
+        }
+    }
+    func explodeBlueEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "BlueEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
                 }
-                else if child.name == "GreenEnemy" {
+            }
+        }
+    }
+    func explodeGreenEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "GreenEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
                 }
-                else if child.name == "YellowEnemy" {
+            }
+        }
+    }
+    func explodeYellowEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "YellowEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
                 }
-                else if child.name == "PinkEnemy" {
+            }
+        }
+    }
+    func explodePinkEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "PinkEnemy" {
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
                 }
-                
+            }
+        }
+    }
+    func explodeFastEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "FastEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
+            }
+        }
+    }
+    func explodeChargeEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "ChargeEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
+            }
+        }
+    }
+    func explodeInvisEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "InvisEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
+            }
+        }
+    }
+    func explodeDarkEnemy() {
+        for node in worldNode.children {
+            if let child = node as? Enemy {
+                score += 1
+                if child.name == "DarkEnemy" {
+                    child.removeAllActions()
+                    child.removeFromParent()
+                    break;
+                }
             }
         }
     }
@@ -949,8 +1135,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //TODO:Change
             if self.score >= 0 {
-                if randomNumber == 0 {
-                    self.spawnBasicEnemy(colour: "Green")
+                if randomNumber > 0 {
+                    self.spawnComplexEnemy(colour: "Dark")
                 }
                 else if randomNumber == 1 {
                     self.spawnBasicEnemy(colour: "Blue")
@@ -988,7 +1174,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for i in 1...4 {
             pinkEnemyAnimation.append(SKTexture(imageNamed:"Pink"+String(i)))
         }
-        
+        fastEnemyAnimation = [SKTexture]()
+        for i in 1...6 {
+            fastEnemyAnimation.append(SKTexture(imageNamed:"Speed"+String(i)))
+        }
+        chargeEnemyAnimation = [SKTexture]()
+        for i in 1...4 {
+            chargeEnemyAnimation.append(SKTexture(imageNamed:"Charge"+String(i)))
+        }
+        invisEnemyAnimation = [SKTexture]()
+        for i in 1...8 {
+            invisEnemyAnimation.append(SKTexture(imageNamed:"Invis"+String(i)))
+        }
+        darknessEnemyAnimation = [SKTexture]()
+        for i in 1...2 {
+            darknessEnemyAnimation.append(SKTexture(imageNamed:"Dark"+String(i)))
+        }
     }
     
     //Tutorial
