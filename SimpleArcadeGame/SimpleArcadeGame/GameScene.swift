@@ -506,7 +506,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             tutorialAnim.append(SKTexture(imageNamed:"tut"+String(i)))
         }
         
-        //Settings TODO: POsitions
         soundButton = SKSpriteNode(texture: SKTexture(imageNamed: "SoundOn"), color: SKColor.clear, size: CGSize(width: 150, height: 150))
         soundButton.zPosition = 2
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -760,7 +759,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    //TODO:
     func invoke() {
         //Destroy enemy if combination matches
         if element1Name == "Red" && element2Name == "Red" && element3Name == "Red" {
@@ -838,9 +836,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //ANIMATION
         monster.run(SKAction.repeatForever(SKAction.animate(with: redEnemyAnimation, timePerFrame: 0.2)))
         
-        //TODO: Recover back to normal amount of HP
-        //startingHealthPoint = healthPoints
-        
         //Show Tutorial
         tutorialPage.position.y = CGFloat(size.height*1.5)
         tutorialPage.removeAllActions()
@@ -888,7 +883,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             spellCombo.texture = SKTexture(imageNamed: "5")
         }
         
-        //TODO: Physics Body to damage player
+        //Physics Body to damage player
         monster.physicsBody = SKPhysicsBody(texture: monster.texture!, size: (monster.size))
         monster.physicsBody?.categoryBitMask = PhysicsCategory.enemy
         monster.physicsBody?.collisionBitMask = PhysicsCategory.none
@@ -943,7 +938,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             spellCombo.texture = SKTexture(imageNamed: "9")
         }
         
-        //TODO: Physics Body to damage player
+        //Physics Body to damage player
         monster.physicsBody = SKPhysicsBody(texture: monster.texture!, size: (monster.size))
         monster.physicsBody?.categoryBitMask = PhysicsCategory.enemy
         monster.physicsBody?.collisionBitMask = PhysicsCategory.none
@@ -1015,18 +1010,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "InitialRedEnemy" {
                     child.removeAllActions()
-                    //TODO: Explode Animation
-                    //child.run(SKAction.animate(with: redEnemyExplosionFrames, timePerFrame: 0.09), completion: {
-                        //child.removeFromParent()})
-                    //TODO:
-                    //uiNode.run(redExplode1Fx)
+                    //TODO: uiNode.run(redExplode1Fx)
+                    
+                    particleAnimation(particleFileName: "RedEnemy", node: child)
+                    
                     child.removeFromParent()
                     startGame()
                     break;
                 }
                 else if child.name == "RedEnemy" {
                     showCoin(position: child.position)
-                    //TODO: particle effect
+                    particleAnimation(particleFileName: "RedEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1040,6 +1034,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "BlueEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "BlueEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1053,6 +1048,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "GreenEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "GreenEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1066,6 +1062,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "YellowEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "YellowEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1079,6 +1076,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "PinkEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "PinkEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1092,6 +1090,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "FastEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "FastEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1105,6 +1104,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "ChargeEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "ChargeEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1118,6 +1118,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "InvisEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "InvisEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1131,6 +1132,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "DarkEnemy" {
                     showCoin(position: child.position)
+                    particleAnimation(particleFileName: "DarkEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1148,7 +1150,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.run(SKAction.wait(forDuration: TimeInterval(self.gameWaitTime)),completion: {[unowned self] in
             guard self.healthPoints > 0 else {return}
             
-            //TODO:Change
             if self.score < 2 {
                 self.spawnBasicEnemy(colour: "Red")
             }
@@ -1226,15 +1227,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gameWaitTime = 3
             }
             //Higher frequency
-            else if self.score < 40 {
-                if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red");self.spawnComplexEnemy(colour: "Dark");self.spawnBasicEnemy(colour: "Red")}
-                else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Green");}
-                else if randomNumber == 3 {self.spawnBasicEnemy(colour: "Green");self.spawnComplexEnemy(colour: "Fast");self.spawnBasicEnemy(colour: "Blue")}
-                else if randomNumber == 4 {self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Charge");self.spawnBasicEnemy(colour: "Yellow")}
-                else if randomNumber == 5 {self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
-                else if randomNumber == 6 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
-            }
-            //Faster spawn
             else if self.score < 52 {
                 if randomNumber == 1 {self.spawnBasicEnemy(colour: "Red");self.spawnComplexEnemy(colour: "Dark");self.spawnBasicEnemy(colour: "Red")}
                 else if randomNumber == 2 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Green");}
@@ -1242,7 +1234,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 else if randomNumber == 4 {self.spawnBasicEnemy(colour: "Yellow");self.spawnComplexEnemy(colour: "Charge");self.spawnBasicEnemy(colour: "Yellow")}
                 else if randomNumber == 5 {self.spawnBasicEnemy(colour: "Pink");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
                 else if randomNumber == 6 {self.spawnBasicEnemy(colour: "Blue");self.spawnComplexEnemy(colour: "Invis");self.spawnBasicEnemy(colour: "Pink")}
-                self.gameWaitTime = 2
             }
             //Increased Frequency
             else if self.score > 52 {
@@ -1385,7 +1376,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //TODO: Play soundFX file
             //TODO: -Money animation
             
-            //Save to Items plist - TODO: Save items when defeat screen is shown
+            //Save number of items
             if let controller = self.view?.window?.rootViewController as? GameViewController {
                 controller.save()
             }
@@ -1555,7 +1546,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    //TODO:
     func startGame() {
         hideEverything(excludeButtons: true)
         scoreLabel.run(SKAction.fadeIn(withDuration: 0.5))
@@ -1821,6 +1811,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Reset game
         score = -1
         healthPoints = 3
+    }
+    
+    //PARTICLES
+    func particleAnimation(particleFileName:String, node:Enemy) {
+        let particle = SKEmitterNode(fileNamed: particleFileName)
+        particle!.targetNode = self
+        particle!.position = node.position
+        particle!.particleZPosition = 10
+        worldNode.addChild(particle!)
+        worldNode.run(SKAction.wait(forDuration: 1), completion: {particle!.removeFromParent()})
     }
     
     //Helper methods
