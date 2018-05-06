@@ -18,8 +18,8 @@ class GameViewController: UIViewController {
     static var musicEnabled:Bool = true
     
     //Items
-    static var amountOfItem1:Int = 60
-    static var amountOfItem2:Int = 60
+    static var amountOfItem1:Int = 68
+    static var amountOfItem2:Int = 68
     
     static var highScore:Int = 0
     static var coins:Int = 999
@@ -54,10 +54,7 @@ class GameViewController: UIViewController {
         let scene = GameScene(size: CGSize(width: 2048, height: 1536))
         let skView = self.view as! SKView
         
-        skView.showsFPS = true
         skView.ignoresSiblingOrder = true
-        skView.showsNodeCount = true
-        skView.showsPhysics = true
         scene.scaleMode = .aspectFill
         skView.presentScene(scene)
         

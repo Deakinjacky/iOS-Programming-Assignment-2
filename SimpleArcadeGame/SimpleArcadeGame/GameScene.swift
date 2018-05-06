@@ -154,7 +154,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func didMove(to view: SKView) {
-        debugAreaPlayableArea()
+        //debugAreaPlayableArea()
         addChild(worldNode)
         addChild(uiNode)
         
@@ -1380,8 +1380,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //Image
             if GameViewController.coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
             else {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyCant");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyCant")}
-            
-            //TODO: -Money animation
+
             
             //Save number of items
             if let controller = self.view?.window?.rootViewController as? GameViewController {
@@ -1840,7 +1839,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         worldNode.run(SKAction.wait(forDuration: 1), completion: {particle!.removeFromParent()})
     }
     
-    //Shake screen
+    //Shake screen - screenShakeWithNode() taken from Raywenderlich.com
     func shakeScreen(shake:String) {
         if shake == "damage" {
             worldNode.run(SKAction.screenShakeWithNode(worldNode, amount: CGPoint(x:30, y:30), oscillations: 20, duration: 0.6))
