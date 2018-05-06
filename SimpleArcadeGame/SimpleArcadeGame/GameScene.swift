@@ -180,24 +180,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 //Make button 'bounce' - More satisfying for users
                 button1.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 createElement(name: button1.name!)
+                GameViewController.playSound(fx: "button", scene: worldNode)
             }
             else if button2.contains(touchPosition) {
                 button2.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 createElement(name: button2.name!)
+                GameViewController.playSound(fx: "button", scene: worldNode)
             }
             else if button3.contains(touchPosition) {
                 button3.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 createElement(name: button3.name!)
+                GameViewController.playSound(fx: "button", scene: worldNode)
             }
             if invokeButton.contains(touchPosition) {
                 invokeButton.run(SKAction.sequence([SKAction.resize(byWidth: -20, height: -20, duration: 0.05),SKAction.resize(byWidth: 20, height: 20, duration: 0.05)]))
                 invoke()
+                GameViewController.playSound(fx: "invoke", scene: worldNode)
             }
             if shopButton.contains(touchPosition) {
                 shopButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]),completion:{[unowned self] in self.showShop()})
+                GameViewController.playSound(fx: "button", scene: worldNode)
             }
             else if crossButton.contains(touchPosition) {
                 crossButton.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]),completion:{[unowned self] in self.hideShop()})
+                GameViewController.playSound(fx: "close", scene: worldNode)
             }
             else if shopBuyButton1.contains(touchPosition) {
                 shopBuyButton1.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
@@ -230,6 +236,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 hideDefeatScreen()
                 showEverything()
                 spawnInitialRedEnemy()
+                GameViewController.playSound(fx: "button", scene: worldNode)
+                
+                if GameViewController.gameplayAudioPlayer.isPlaying {GameViewController.gameplayAudioPlayer.setVolume(0.7, fadeDuration: 0.2)}
             }
         }
     }
@@ -254,6 +263,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.goal.physicsBody?.categoryBitMask = PhysicsCategory.goal})
             
             healthPoints -= 1
+            GameViewController.playSound(fx: "damage", scene: worldNode)
             if healthPoints <= 0 {
                 //Show Lose Screen
                 showDefeatScreen()
@@ -991,8 +1001,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "InitialRedEnemy" {
                     child.removeAllActions()
-                    //TODO: uiNode.run(redExplode1Fx)
-                    
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "RedEnemy", node: child)
                     
                     child.removeFromParent()
@@ -1001,6 +1010,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 else if child.name == "RedEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "RedEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1015,6 +1025,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "BlueEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "BlueEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1029,6 +1040,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "GreenEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "GreenEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1043,6 +1055,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "YellowEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "YellowEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1057,6 +1070,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "PinkEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "PinkEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1071,6 +1085,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "FastEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "FastEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1085,6 +1100,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "ChargeEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "ChargeEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1098,6 +1114,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if let child = node as? Enemy {
                 score += 1
                 if child.name == "InvisEnemy" {
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     showCoin(position: child.position)
                     particleAnimation(particleFileName: "InvisEnemy", node: child)
                     child.removeAllActions()
@@ -1113,6 +1130,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 score += 1
                 if child.name == "DarkEnemy" {
                     showCoin(position: child.position)
+                    GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "DarkEnemy", node: child)
                     child.removeAllActions()
                     child.removeFromParent()
@@ -1348,13 +1366,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func buyItem(cost:Int, itemNumber:Int) {
         if GameViewController.coins >= cost {
-            if itemNumber == 1 {GameViewController.coins-=50; GameViewController.amountOfItem1+=1}
-            else if itemNumber == 2 {GameViewController.coins-=50; GameViewController.amountOfItem2+=1}
+            if itemNumber == 1 {GameViewController.coins-=50; GameViewController.amountOfItem1+=1; GameViewController.playSound(fx: "buy", scene: worldNode)}
+            else if itemNumber == 2 {GameViewController.coins-=50; GameViewController.amountOfItem2+=1;GameViewController.playSound(fx: "buy",scene:worldNode)}
             //Image
             if GameViewController.coins >= 50 {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyButton");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyButton")}
             else {shopBuyButton1?.texture = SKTexture(imageNamed: "BuyCant");shopBuyButton2?.texture = SKTexture(imageNamed: "BuyCant")}
             
-            //TODO: Play soundFX file
             //TODO: -Money animation
             
             //Save number of items
@@ -1371,7 +1388,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 controller.save()
             }
         }
-        else {/*TODO: ERROR Sound*/}
+        else {GameViewController.playSound(fx: "error",scene:worldNode)}
     }
     
     //Hide everything (Shop/Leader button tapped OR Starting game)
@@ -1500,15 +1517,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             controller.save()
         }
     }
-    //TODO:
+ 
     func toggleMusic() {
         if GameViewController.musicEnabled {
             GameViewController.musicEnabled = false
             musicButton.texture = SKTexture(imageNamed:"MusicOff")
+            
+            if GameViewController.gameplayAudioPlayer.isPlaying {
+                GameViewController.gameplayAudioPlayer.stop()
+            }
         }
         else if !GameViewController.musicEnabled {
             GameViewController.musicEnabled = true
             musicButton.texture = SKTexture(imageNamed:"MusicOn")
+            
+            if !GameViewController.gameplayAudioPlayer.isPlaying {
+                GameViewController.gameplayAudioPlayer.play()
+            }
         }
         //Save settings
         if let controller = self.view?.window?.rootViewController as? GameViewController {
@@ -1619,6 +1644,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             item1Number.text = "\(GameViewController.amountOfItem1)"
             healthPoints += 1
             
+            GameViewController.playSound(fx: "item1", scene: worldNode)
+            
             if healthPoints == 3 {
                 health1?.alpha = 1.0
                 health2?.alpha = 1.0
@@ -1644,6 +1671,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func useItem2() {
         guard GameViewController.amountOfItem2 >= 1 else {return}
         
+        GameViewController.playSound(fx: "item2", scene: worldNode)
+        
         GameViewController.amountOfItem2 -= 1
         item2Number.text = "\(GameViewController.amountOfItem2)"
         //Explode all enemies
@@ -1651,6 +1680,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if let node = child as? Enemy {
                 if node.name!.contains("RedEnemy") {
                     explodeRedEnemy()
+                    //To prevent amp of sound effects - Play explode only once
+                    GameViewController.soundEnabled = false
                 }
                 if node.name!.contains("GreenEnemy") {
                     explodeGreenEnemy()
@@ -1678,6 +1709,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+        GameViewController.soundEnabled = true
     }
     
     func showCoin(position:CGPoint) {
@@ -1694,8 +1726,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         GameViewController.coins += 1
         
-        //TODO: Coin Sound Effect
-        
+        //Coin Sound Effect
+        GameViewController.playSound(fx: "coin", scene: worldNode)
     }
     
     //DEFEAT SCREEN
@@ -1766,10 +1798,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         defeatBestScoreLabel.position.y = CGFloat(playableRect.maxY*0.58)
         defeatBestScoreLabel.alpha = 1.0
         
+        //Sound effect
+        GameViewController.playSound(fx: "defeat",scene:worldNode)
+        
         //Save high score and number of items
         if let controller = self.view?.window?.rootViewController as? GameViewController {
             controller.save()
         }
+        
+        //Stop Music
+        if GameViewController.gameplayAudioPlayer.isPlaying {GameViewController.gameplayAudioPlayer.setVolume(0.0, fadeDuration: 0.2)}
     }
     func hideDefeatScreen() {
         //Animate

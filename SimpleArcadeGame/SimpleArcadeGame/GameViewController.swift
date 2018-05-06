@@ -9,6 +9,7 @@
 import UIKit
 import SpriteKit
 import GameplayKit
+import AVFoundation
 
 class GameViewController: UIViewController {
     
@@ -22,6 +23,25 @@ class GameViewController: UIViewController {
     
     static var highScore:Int = 0
     static var coins:Int = 999
+    
+    //MUSIC
+    static var gameplayAudioPlayer: AVAudioPlayer!
+    
+    //Sound Fx
+    static let buttonSoundFx = SKAction.playSoundFileNamed("Button", waitForCompletion: false)
+    static let invokeSoundFx = SKAction.playSoundFileNamed("Invoke", waitForCompletion: false)
+    static let damageSoundFx = SKAction.playSoundFileNamed("Damaged", waitForCompletion: false)
+    static let buySoundFx = SKAction.playSoundFileNamed("Buy", waitForCompletion: false)
+    static let errorSoundFx = SKAction.playSoundFileNamed("Error", waitForCompletion: false)
+    static let defeatSoundFx = SKAction.playSoundFileNamed("Defeat", waitForCompletion: false)
+    static let coin1SoundFx = SKAction.playSoundFileNamed("Coin1", waitForCompletion: false)
+    static let coin2SoundFx = SKAction.playSoundFileNamed("Coin2", waitForCompletion: false)
+    static var coinVariation:Int = 1
+    static let explode1SoundFx = SKAction.playSoundFileNamed("Explode3", waitForCompletion: false)
+    static var explodeVariation:Int = 1
+    static let closeSoundFx = SKAction.playSoundFileNamed("Close", waitForCompletion: false)
+    static let item1SoundFx = SKAction.playSoundFileNamed("Item1", waitForCompletion: false)
+    static let item2SoundFx = SKAction.playSoundFileNamed("Item2", waitForCompletion: false)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,14 +60,25 @@ class GameViewController: UIViewController {
         skView.showsPhysics = true
         scene.scaleMode = .aspectFill
         skView.presentScene(scene)
+        
+        GameViewController.prepareMusic()
     }
     
-    static func playSound(fx:String) {
-        guard GameViewController.soundEnabled == true else {return}
-        if fx == "GameplayButton" {}
-    }
     static func prepareMusic() {
         guard GameViewController.musicEnabled == true else {return}
+        
+        //MUSIC
+        let gameplayAudioFilePath = Bundle.main.path(forResource: "GameplayMusic", ofType: "wav")
+        let gameplayAudioUrl = NSURL(fileURLWithPath: gameplayAudioFilePath!)
+        GameViewController.gameplayAudioPlayer = try! AVAudioPlayer(contentsOf: gameplayAudioUrl as URL)
+        GameViewController.gameplayAudioPlayer.prepareToPlay()
+        GameViewController.gameplayAudioPlayer.currentTime = 0.0
+        GameViewController.gameplayAudioPlayer.volume = 0.7
+        GameViewController.gameplayAudioPlayer.numberOfLoops = -1
+        
+        if GameViewController.musicEnabled {
+           GameViewController.gameplayAudioPlayer.play()
+        }
     }
     
     //SAVE + LOAD
@@ -127,6 +158,24 @@ class GameViewController: UIViewController {
                 
             }
         }
+    }
+    
+    static func playSound(fx:String, scene:SKNode) {
+        guard GameViewController.soundEnabled == true else {return}
+        if fx == "button" {scene.run(buttonSoundFx)}
+        else if fx == "invoke" {scene.run(invokeSoundFx)}
+        else if fx == "buy" {scene.run(buySoundFx)}
+        else if fx == "defeat" {scene.run(defeatSoundFx)}
+        else if fx == "coin" {
+            if GameViewController.coinVariation == 1 {scene.run(coin1SoundFx);GameViewController.coinVariation = 2}
+        else if GameViewController.coinVariation == 2 {scene.run(coin2SoundFx);GameViewController.coinVariation = 1}
+        }
+        else if fx == "error" {scene.run(errorSoundFx)}
+        else if fx == "explode" {scene.run(explode1SoundFx)}
+        else if fx == "close" {scene.run(closeSoundFx)}
+        else if fx == "damage" {scene.run(damageSoundFx)}
+        else if fx == "item1" {scene.run(item1SoundFx)}
+        else if fx == "item2" {scene.run(item2SoundFx)}
     }
 
     override var shouldAutorotate: Bool {

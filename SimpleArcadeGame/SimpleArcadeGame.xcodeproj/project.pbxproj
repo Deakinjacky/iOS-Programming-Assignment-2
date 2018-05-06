@@ -26,6 +26,19 @@
 		6DCF46682099663000441C4E /* ElementIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCF46672099663000441C4E /* ElementIcon.swift */; };
 		6DCF466B209988FB00441C4E /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCF466A209988FB00441C4E /* Enemy.swift */; };
 		6DCF466D2099891300441C4E /* RedEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCF466C2099891300441C4E /* RedEnemy.swift */; };
+		6DD94393209F078400518571 /* Damaged.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD94387209F078400518571 /* Damaged.wav */; };
+		6DD94394209F078400518571 /* Invoke.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD94388209F078400518571 /* Invoke.wav */; };
+		6DD94395209F078400518571 /* Buy.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD94389209F078400518571 /* Buy.wav */; };
+		6DD94396209F078400518571 /* Defeat.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9438A209F078400518571 /* Defeat.wav */; };
+		6DD94397209F078400518571 /* Button.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9438B209F078400518571 /* Button.wav */; };
+		6DD94398209F078400518571 /* Coin2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9438C209F078400518571 /* Coin2.wav */; };
+		6DD94399209F078400518571 /* Close.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9438D209F078400518571 /* Close.wav */; };
+		6DD9439A209F078400518571 /* Coin1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9438E209F078400518571 /* Coin1.wav */; };
+		6DD9439B209F078400518571 /* Error.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9438F209F078400518571 /* Error.wav */; };
+		6DD9439D209F078400518571 /* Explode3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD94391209F078400518571 /* Explode3.wav */; };
+		6DD943A0209F088C00518571 /* GameplayMusic.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9439F209F088C00518571 /* GameplayMusic.wav */; };
+		6DD943A3209F135000518571 /* Item2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD943A1209F135000518571 /* Item2.wav */; };
+		6DD943A4209F135000518571 /* Item1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD943A2209F135000518571 /* Item1.wav */; };
 		6DFEDF9A209EE5A000C8CB29 /* RedEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6DFEDF99209EE5A000C8CB29 /* RedEnemy.sks */; };
 		6DFEDF9C209EE93F00C8CB29 /* BlueEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6DFEDF9B209EE93F00C8CB29 /* BlueEnemy.sks */; };
 		6DFEDF9E209EF06100C8CB29 /* GreenEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6DFEDF9D209EF06100C8CB29 /* GreenEnemy.sks */; };
@@ -59,6 +72,19 @@
 		6DCF46672099663000441C4E /* ElementIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementIcon.swift; sourceTree = "<group>"; };
 		6DCF466A209988FB00441C4E /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		6DCF466C2099891300441C4E /* RedEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedEnemy.swift; sourceTree = "<group>"; };
+		6DD94387209F078400518571 /* Damaged.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Damaged.wav; sourceTree = "<group>"; };
+		6DD94388209F078400518571 /* Invoke.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Invoke.wav; sourceTree = "<group>"; };
+		6DD94389209F078400518571 /* Buy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Buy.wav; sourceTree = "<group>"; };
+		6DD9438A209F078400518571 /* Defeat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Defeat.wav; sourceTree = "<group>"; };
+		6DD9438B209F078400518571 /* Button.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Button.wav; sourceTree = "<group>"; };
+		6DD9438C209F078400518571 /* Coin2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Coin2.wav; sourceTree = "<group>"; };
+		6DD9438D209F078400518571 /* Close.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Close.wav; sourceTree = "<group>"; };
+		6DD9438E209F078400518571 /* Coin1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Coin1.wav; sourceTree = "<group>"; };
+		6DD9438F209F078400518571 /* Error.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Error.wav; sourceTree = "<group>"; };
+		6DD94391209F078400518571 /* Explode3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Explode3.wav; sourceTree = "<group>"; };
+		6DD9439F209F088C00518571 /* GameplayMusic.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = GameplayMusic.wav; sourceTree = "<group>"; };
+		6DD943A1209F135000518571 /* Item2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Item2.wav; sourceTree = "<group>"; };
+		6DD943A2209F135000518571 /* Item1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Item1.wav; sourceTree = "<group>"; };
 		6DFEDF99209EE5A000C8CB29 /* RedEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = RedEnemy.sks; sourceTree = "<group>"; };
 		6DFEDF9B209EE93F00C8CB29 /* BlueEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BlueEnemy.sks; sourceTree = "<group>"; };
 		6DFEDF9D209EF06100C8CB29 /* GreenEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GreenEnemy.sks; sourceTree = "<group>"; };
@@ -117,6 +143,7 @@
 		6DCF464C2099589900441C4E /* SimpleArcadeGame */ = {
 			isa = PBXGroup;
 			children = (
+				6DD94386209F078400518571 /* Music */,
 				6DCCBACA209DCE0000C8E102 /* Particles */,
 				6DCF4669209988F200441C4E /* Enemy */,
 				6DCF464D2099589900441C4E /* AppDelegate.swift */,
@@ -148,6 +175,27 @@
 			);
 			path = Enemy;
 			sourceTree = "<group>";
+		};
+		6DD94386209F078400518571 /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				6DD94387209F078400518571 /* Damaged.wav */,
+				6DD94388209F078400518571 /* Invoke.wav */,
+				6DD94389209F078400518571 /* Buy.wav */,
+				6DD9438A209F078400518571 /* Defeat.wav */,
+				6DD9438B209F078400518571 /* Button.wav */,
+				6DD9438C209F078400518571 /* Coin2.wav */,
+				6DD9438D209F078400518571 /* Close.wav */,
+				6DD9438E209F078400518571 /* Coin1.wav */,
+				6DD9438F209F078400518571 /* Error.wav */,
+				6DD94391209F078400518571 /* Explode3.wav */,
+				6DD9439F209F088C00518571 /* GameplayMusic.wav */,
+				6DD943A2209F135000518571 /* Item1.wav */,
+				6DD943A1209F135000518571 /* Item2.wav */,
+			);
+			name = Music;
+			path = Resources/Music;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -210,16 +258,29 @@
 				6DFEDFA2209EF3E100C8CB29 /* PinkEnemy.sks in Resources */,
 				6DFEDFA0209EF0A300C8CB29 /* YellowEnemy.sks in Resources */,
 				6DFEDFA4209EF43200C8CB29 /* FastEnemy.sks in Resources */,
+				6DD943A4209F135000518571 /* Item1.wav in Resources */,
+				6DD94395209F078400518571 /* Buy.wav in Resources */,
 				6DFEDF9E209EF06100C8CB29 /* GreenEnemy.sks in Resources */,
 				6DFEDF9A209EE5A000C8CB29 /* RedEnemy.sks in Resources */,
+				6DD94397209F078400518571 /* Button.wav in Resources */,
 				6DFEDFAA209EF53B00C8CB29 /* DarkEnemy.sks in Resources */,
 				6DCF46592099589900441C4E /* Main.storyboard in Resources */,
+				6DD94394209F078400518571 /* Invoke.wav in Resources */,
 				6DFEDF9C209EE93F00C8CB29 /* BlueEnemy.sks in Resources */,
+				6DD94399209F078400518571 /* Close.wav in Resources */,
+				6DD94393209F078400518571 /* Damaged.wav in Resources */,
 				6DCF465B2099589B00441C4E /* Assets.xcassets in Resources */,
 				6DFEDFA8209EF4DC00C8CB29 /* InvisEnemy.sks in Resources */,
+				6DD9439B209F078400518571 /* Error.wav in Resources */,
 				6DCF465E2099589B00441C4E /* LaunchScreen.storyboard in Resources */,
 				6DFEDFA6209EF48300C8CB29 /* ChargeEnemy.sks in Resources */,
+				6DD943A0209F088C00518571 /* GameplayMusic.wav in Resources */,
+				6DD943A3209F135000518571 /* Item2.wav in Resources */,
+				6DD94396209F078400518571 /* Defeat.wav in Resources */,
+				6DD9439D209F078400518571 /* Explode3.wav in Resources */,
 				6DCCBAD2209DCE6500C8E102 /* Assets.xcassets in Resources */,
+				6DD9439A209F078400518571 /* Coin1.wav in Resources */,
+				6DD94398209F078400518571 /* Coin2.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
