@@ -54,8 +54,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var item1Number:SKLabelNode!
     var item2:SKSpriteNode!
     var item2Number:SKLabelNode!
-    //Leaderboard
-    var leaderboardButton:SKSpriteNode!
     
     var button1:SKSpriteNode!
     var button2:SKSpriteNode!
@@ -218,10 +216,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 item2.run(SKAction.sequence([SKAction.resize(byWidth: -25, height: -25, duration: 0.05),SKAction.resize(byWidth: 25, height: 25, duration: 0.05)]))
                 useItem2()
             }
-            
-            if leaderboardButton.contains(touchPosition) {
-                leaderboardButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
-            }
             if soundButton.contains(touchPosition) {
                 soundButton.run(SKAction.sequence([SKAction.resize(byWidth: -30, height: -30, duration: 0.05),SKAction.resize(byWidth: 30, height: 30, duration: 0.05)]))
                 toggleSoundFx()
@@ -335,19 +329,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         shopButton.name = "ShopButton"
         shopButton.size = CGSize(width: 150, height: 150)
         uiNode.addChild(shopButton)
-        
-        //Leaderboard
-        leaderboardButton = SKSpriteNode(texture: SKTexture(imageNamed: "LeaderboardButton"))
-        leaderboardButton.zPosition = 3
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            leaderboardButton.position = CGPoint(x: size.width*0.936, y: size.height*0.36)
-        }
-        else if UIDevice.current.userInterfaceIdiom == .phone {
-            leaderboardButton.position = CGPoint(x: size.width*0.936, y: playableRect.maxY*0.36)
-        }
-        leaderboardButton.name = "LeaderboardButton"
-        leaderboardButton.size = CGSize(width: 150, height: 150)
-        uiNode.addChild(leaderboardButton)
     }
     
     func initialiseUi() {
@@ -1439,9 +1420,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         shopButton.removeAllActions()
         shopButton.alpha = 1.0
         shopButton.run(SKAction.moveTo(y: -size.height*1.4, duration: 0.5))
-        leaderboardButton.removeAllActions()
-        leaderboardButton.alpha = 1.0
-        leaderboardButton.run(SKAction.moveTo(y: -size.height*1.4, duration: 0.5))
     }
     func showEverything() {
         //Top Elements
@@ -1503,14 +1481,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         else if UIDevice.current.userInterfaceIdiom == .phone {
             shopButton.run(SKAction.moveTo(y: playableRect.maxY*0.22, duration: 0.5))
-        }
-        leaderboardButton.removeAllActions()
-        leaderboardButton.alpha = 1.0
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            leaderboardButton.run(SKAction.moveTo(y: size.height*0.36, duration: 0.5))
-        }
-        else if UIDevice.current.userInterfaceIdiom == .phone {
-            leaderboardButton.run(SKAction.moveTo(y: playableRect.maxY*0.36, duration: 0.5))
         }
         
         self.goal.physicsBody?.categoryBitMask = PhysicsCategory.goal
