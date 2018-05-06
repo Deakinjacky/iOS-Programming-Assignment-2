@@ -248,7 +248,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard contact.bodyA.node != nil && contact.bodyB.node != nil else {return}
         if contact.bodyA.node?.name == "goal" || (contact.bodyB.node?.name?.contains("Enemy"))! {
             if let child = contact.bodyA.node as? Enemy {
-                //TODO: Shake screen
                 child.removeFromParent()
             }
             else if let child = contact.bodyB.node as? Enemy {
@@ -263,11 +262,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.goal.physicsBody?.categoryBitMask = PhysicsCategory.goal})
             
             healthPoints -= 1
-            GameViewController.playSound(fx: "damage", scene: worldNode)
             if healthPoints <= 0 {
                 //Show Lose Screen
                 showDefeatScreen()
             }
+            //Shake screen
+            shakeScreen(shake: "damage")
         }
     }
     
@@ -1003,7 +1003,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     child.removeAllActions()
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "RedEnemy", node: child)
-                    
+                    shakeScreen(shake: "normal")
                     child.removeFromParent()
                     startGame()
                     break;
@@ -1012,6 +1012,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "RedEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1027,6 +1028,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "BlueEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1042,6 +1044,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "GreenEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1057,6 +1060,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "YellowEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1072,6 +1076,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "PinkEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1087,6 +1092,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "FastEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1102,6 +1108,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "ChargeEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1117,6 +1124,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     showCoin(position: child.position)
                     particleAnimation(particleFileName: "InvisEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1132,6 +1140,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     showCoin(position: child.position)
                     GameViewController.playSound(fx: "explode", scene: worldNode)
                     particleAnimation(particleFileName: "DarkEnemy", node: child)
+                    shakeScreen(shake: "normal")
                     child.removeAllActions()
                     child.removeFromParent()
                     break;
@@ -1829,6 +1838,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         particle!.particleZPosition = 10
         worldNode.addChild(particle!)
         worldNode.run(SKAction.wait(forDuration: 1), completion: {particle!.removeFromParent()})
+    }
+    
+    //Shake screen
+    func shakeScreen(shake:String) {
+        if shake == "damage" {
+            worldNode.run(SKAction.screenShakeWithNode(worldNode, amount: CGPoint(x:30, y:30), oscillations: 20, duration: 0.6))
+            uiNode.run(SKAction.screenShakeWithNode(uiNode, amount: CGPoint(x:30, y:30), oscillations: 20, duration: 0.6))
+            GameViewController.playSound(fx:"damage",scene:worldNode)
+        }
+        else if shake == "normal" {
+            worldNode.run(SKAction.screenShakeWithNode(worldNode, amount: CGPoint(x:20,y:20), oscillations: 15, duration: 0.8))
+            uiNode.run(SKAction.screenShakeWithNode(uiNode, amount: CGPoint(x:20, y:20), oscillations: 15, duration: 0.6))
+        }
     }
     
     //Helper methods

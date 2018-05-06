@@ -39,6 +39,10 @@
 		6DD943A0209F088C00518571 /* GameplayMusic.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD9439F209F088C00518571 /* GameplayMusic.wav */; };
 		6DD943A3209F135000518571 /* Item2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD943A1209F135000518571 /* Item2.wav */; };
 		6DD943A4209F135000518571 /* Item1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6DD943A2209F135000518571 /* Item1.wav */; };
+		6DD943AA209F15B200518571 /* SKTTimingFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD943A6209F15B200518571 /* SKTTimingFunctions.swift */; };
+		6DD943AB209F15B200518571 /* MyUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD943A7209F15B200518571 /* MyUtils.swift */; };
+		6DD943AC209F15B200518571 /* SKAction+SpecialEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD943A8209F15B200518571 /* SKAction+SpecialEffects.swift */; };
+		6DD943AD209F15B200518571 /* SKTEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD943A9209F15B200518571 /* SKTEffects.swift */; };
 		6DFEDF9A209EE5A000C8CB29 /* RedEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6DFEDF99209EE5A000C8CB29 /* RedEnemy.sks */; };
 		6DFEDF9C209EE93F00C8CB29 /* BlueEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6DFEDF9B209EE93F00C8CB29 /* BlueEnemy.sks */; };
 		6DFEDF9E209EF06100C8CB29 /* GreenEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6DFEDF9D209EF06100C8CB29 /* GreenEnemy.sks */; };
@@ -85,6 +89,10 @@
 		6DD9439F209F088C00518571 /* GameplayMusic.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = GameplayMusic.wav; sourceTree = "<group>"; };
 		6DD943A1209F135000518571 /* Item2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Item2.wav; sourceTree = "<group>"; };
 		6DD943A2209F135000518571 /* Item1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Item1.wav; sourceTree = "<group>"; };
+		6DD943A6209F15B200518571 /* SKTTimingFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTTimingFunctions.swift; sourceTree = "<group>"; };
+		6DD943A7209F15B200518571 /* MyUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyUtils.swift; sourceTree = "<group>"; };
+		6DD943A8209F15B200518571 /* SKAction+SpecialEffects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKAction+SpecialEffects.swift"; sourceTree = "<group>"; };
+		6DD943A9209F15B200518571 /* SKTEffects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTEffects.swift; sourceTree = "<group>"; };
 		6DFEDF99209EE5A000C8CB29 /* RedEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = RedEnemy.sks; sourceTree = "<group>"; };
 		6DFEDF9B209EE93F00C8CB29 /* BlueEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BlueEnemy.sks; sourceTree = "<group>"; };
 		6DFEDF9D209EF06100C8CB29 /* GreenEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GreenEnemy.sks; sourceTree = "<group>"; };
@@ -143,6 +151,7 @@
 		6DCF464C2099589900441C4E /* SimpleArcadeGame */ = {
 			isa = PBXGroup;
 			children = (
+				6DD943A5209F15B200518571 /* ShakeScreen */,
 				6DD94386209F078400518571 /* Music */,
 				6DCCBACA209DCE0000C8E102 /* Particles */,
 				6DCF4669209988F200441C4E /* Enemy */,
@@ -196,6 +205,17 @@
 			name = Music;
 			path = Resources/Music;
 			sourceTree = SOURCE_ROOT;
+		};
+		6DD943A5209F15B200518571 /* ShakeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				6DD943A6209F15B200518571 /* SKTTimingFunctions.swift */,
+				6DD943A7209F15B200518571 /* MyUtils.swift */,
+				6DD943A8209F15B200518571 /* SKAction+SpecialEffects.swift */,
+				6DD943A9209F15B200518571 /* SKTEffects.swift */,
+			);
+			path = ShakeScreen;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -293,12 +313,16 @@
 			files = (
 				6DCCBABB209D74CF00C8E102 /* BlueEnemy.swift in Sources */,
 				6DCCBABD209D74E700C8E102 /* GreenEnemy.swift in Sources */,
+				6DD943AC209F15B200518571 /* SKAction+SpecialEffects.swift in Sources */,
+				6DD943AD209F15B200518571 /* SKTEffects.swift in Sources */,
 				6DCF46682099663000441C4E /* ElementIcon.swift in Sources */,
 				6DCF46542099589900441C4E /* GameScene.swift in Sources */,
 				6DCCBAC9209D78C000C8E102 /* DarknessEnemy.swift in Sources */,
 				6DCCBAC5209D77ED00C8E102 /* ChargeEnemy.swift in Sources */,
+				6DD943AA209F15B200518571 /* SKTTimingFunctions.swift in Sources */,
 				6DCCBABF209D750700C8E102 /* YellowEnemy.swift in Sources */,
 				6DCF466B209988FB00441C4E /* Enemy.swift in Sources */,
+				6DD943AB209F15B200518571 /* MyUtils.swift in Sources */,
 				6DCCBAC1209D773200C8E102 /* InvisEnemy.swift in Sources */,
 				6DCF46562099589900441C4E /* GameViewController.swift in Sources */,
 				6DCF464E2099589900441C4E /* AppDelegate.swift in Sources */,
