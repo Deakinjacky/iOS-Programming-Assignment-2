@@ -1824,6 +1824,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Stop Music
         if GameViewController.gameplayAudioPlayer.isPlaying {GameViewController.gameplayAudioPlayer.setVolume(0.0, fadeDuration: 0.2)}
+        
+        //Reset gameWaitTime
+        self.gameWaitTime = 4
     }
     func hideDefeatScreen() {
         //Animate
