@@ -1624,6 +1624,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         item2.alpha = 1.0
         item2Number.alpha = 1.0
         
+        item1Number.text = "\(GameViewController.amountOfItem1)"
+        item2Number.text = "\(GameViewController.amountOfItem2)"
+        
         if UIDevice.current.userInterfaceIdiom == .pad {
             item1.run(SKAction.moveTo(y: size.height*0.23, duration: 0.5))
             item1Number.run(SKAction.moveTo(y: size.height*0.20, duration: 0.5))
@@ -1674,6 +1677,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 health2?.alpha = 0.0
                 health3?.alpha = 0.0
             }
+            
+            item1Number.text = "\(GameViewController.amountOfItem1)"
+            item2Number.text = "\(GameViewController.amountOfItem2)"
         }
     }
     func useItem2() {
@@ -1718,6 +1724,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         GameViewController.soundEnabled = true
+        item1Number.text = "\(GameViewController.amountOfItem1)"
+        item2Number.text = "\(GameViewController.amountOfItem2)"
     }
     
     func showCoin(position:CGPoint) {
